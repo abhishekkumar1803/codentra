@@ -1,0 +1,17 @@
+---
+description: Codentra core engineering rules
+alwaysApply: true
+---
+
+- Monorepo: pnpm workspaces + Turborepo
+- Backend: NestJS feature modules at apps/api/src/features/
+- Frontend: Next.js 15 App Router at apps/web/src/features/
+- Prisma schema at apps/api/prisma/schema.prisma — single source of truth
+- Strict TypeScript — no `any`
+- API: /api/v1 with envelope { success, data } or { success: false, error }
+- Auth: JWT in httpOnly cookies via BFF /api/proxy/* (target architecture)
+- Every feature: validation, loading states, empty states, mobile responsive
+- Update docs/TASKS.md and docs/CHANGELOG.md after each completed feature
+- Build phases in order — never skip ahead
+- Conventional commits: feat(scope): description
+- Minimal diff — match patterns, no over-engineering

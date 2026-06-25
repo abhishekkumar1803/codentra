@@ -6,12 +6,13 @@ import { authApi } from '../api/auth-api';
 import { useAuthStore } from '@/shared/stores/auth-store';
 
 export function useAuth() {
+  const sessionReady = useAuthStore((s) => s.sessionReady);
   const accessToken = useAuthStore((s) => s.accessToken);
 
   return useQuery({
     queryKey: ['auth', 'me'],
     queryFn: authApi.me,
-    enabled: !!accessToken,
+    enabled: sessionReady && !!accessToken,
     retry: false,
   });
 }

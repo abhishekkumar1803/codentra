@@ -2,12 +2,17 @@ import Link from 'next/link';
 
 const footerLinks = {
   Product: [
-    { href: '#features', label: 'Features' },
-    { href: '#pricing', label: 'Pricing' },
+    { href: '/#features', label: 'Features' },
+    { href: '/pricing', label: 'Pricing' },
+    { href: '/login', label: 'Sign In' },
   ],
-  Account: [
-    { href: '/login', label: 'Log in' },
-    { href: '/register', label: 'Sign up' },
+  Company: [
+    { href: '/faq', label: 'FAQ' },
+    { href: 'mailto:hello@codentra.com', label: 'Contact' },
+  ],
+  Legal: [
+    { href: '/terms', label: 'Terms of Service' },
+    { href: '/privacy', label: 'Privacy Policy' },
   ],
 };
 
@@ -16,16 +21,17 @@ export function Footer() {
     <footer className="border-t bg-muted/30">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4">
-          <div className="sm:col-span-2">
+          <div className="sm:col-span-1">
             <div className="flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
                 C
               </span>
               <span className="text-lg font-bold">Codentra</span>
             </div>
-            <p className="mt-3 max-w-sm text-sm text-muted-foreground">
-              Learn. Compete. Grow. The all-in-one platform for developers to
-              practice, compete, and advance their careers.
+            <p className="mt-2 text-sm font-medium">Learn. Compete. Grow.</p>
+            <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+              The platform for developers to practice, compete, and advance
+              their careers.
             </p>
           </div>
 

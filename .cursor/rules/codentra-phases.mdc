@@ -1,0 +1,13 @@
+---
+description: Phase gate rules
+alwaysApply: true
+---
+
+- Complete current phase before starting next
+- Run pnpm typecheck after each phase
+- Run pnpm db:push after schema changes
+- Member routes: @RequireSubscription() on backend
+- Admin routes: @Roles(ADMIN, SUPER_ADMIN)
+- Never commit .env files
+- Razorpay dev mode when keys empty (auto-activate locally)
+- Use docker compose up -d for local PostgreSQL

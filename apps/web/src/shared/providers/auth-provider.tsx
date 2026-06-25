@@ -21,21 +21,40 @@ async function tryRefreshToken(): Promise<string | null> {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const setStoreToken = useAuthStore((s) => s.setAccessToken);
+  const setSessionReady = useAuthStore((s) => s.setSessionReady);
 
   useEffect(() => {
-    const token = getAccessToken() ?? useAuthStore.getState().accessToken;
-    if (token) {
-      setAccessToken(token);
-      setStoreToken(token);
-      return;
+    let cancelled = false;
+
+    async function bootstrap() {
+      const token = getAccessToken() ?? useAuthStore.getState().accessToken;
+      if (token) {
+        setAccessToken(token);
+        setStoreToken(token);
+        if (!cancelled) setSessionReady(true);
+        return;
+      }
+
+      const refreshed = await tryRefreshToken();
+      if (!cancelled) {
+        if (refreshed) setStoreToken(refreshed);
+        setSessionReady(true);
+      }
     }
 
-    void tryRefreshToken().then((refreshed) => {
-      if (refreshed) {
-        setStoreToken(refreshed);
-      }
+    const unsub = useAuthStore.persist.onFinishHydration(() => {
+      void bootstrap();
     });
-  }, [setStoreToken]);
+
+    if (useAuthStore.persist.hasHydrated()) {
+      void bootstrap();
+    }
+
+    return () => {
+      cancelled = true;
+      unsub();
+    };
+  }, [setStoreToken, setSessionReady]);
 
   return <>{children}</>;
 }

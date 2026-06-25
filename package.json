@@ -8,13 +8,16 @@
   },
   "scripts": {
     "dev": "turbo dev",
-    "dev:clean": "lsof -ti:3000,3001 | xargs kill -9 2>/dev/null || true && rm -rf apps/web/.next apps/api/dist && rm -f apps/api/tsconfig.build.tsbuildinfo apps/api/tsconfig.tsbuildinfo && turbo dev",
+    "dev:clean": "lsof -ti:3000,3001 | xargs kill -9 2>/dev/null || true && rm -rf apps/web/.next apps/api/dist packages/ui/dist packages/types/dist && rm -f apps/api/tsconfig.build.tsbuildinfo apps/api/tsconfig.tsbuildinfo && turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,cjs,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,cjs,json,md}\"",
     "clean": "turbo clean && rm -rf node_modules",
+    "db:push": "pnpm --filter @codentra/api db:push",
+    "db:seed": "pnpm --filter @codentra/api db:seed",
+    "db:generate": "pnpm --filter @codentra/api db:generate",
     "prepare": "husky"
   },
   "devDependencies": {

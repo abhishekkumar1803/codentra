@@ -99,6 +99,33 @@ enum NotificationType {
   SYSTEM
 }
 
+enum ProblemDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum CodeLanguage {
+  PYTHON
+  CPP
+  JAVA
+  JAVASCRIPT
+}
+
+enum RatingType {
+  DSA
+  CP
+}
+
+enum SubmissionVerdict {
+  PENDING
+  ACCEPTED
+  WRONG_ANSWER
+  RUNTIME_ERROR
+  TIME_LIMIT_EXCEEDED
+  COMPILATION_ERROR
+}
+
 // ─────────────────────────────────────────────
 // Users & Auth
 // ─────────────────────────────────────────────
@@ -124,6 +151,7 @@ model User {
   payments            Payment[]
   contestsCreated     Contest[]            @relation("ContestCreator")
   contestParticipants ContestParticipant[]
+  systemDesignSubmissions SystemDesignSubmission[]
   leaderboardEntries  LeaderboardEntry[]
   jobsPosted          Job[]                @relation("JobPoster")
   referrals           Referral[]
@@ -137,6 +165,9 @@ model User {
   linkedinReviewsGiven LinkedInReview[]    @relation("LinkedInReviewer")
   notifications       Notification[]
   activityLogs        ActivityLog[]
+  profile             Profile?
+  codeSubmissions     CodeSubmission[]
+  ratingHistory       RatingHistory[]
 
   @@index([email])
   @@index([role])
@@ -171,6 +202,25 @@ model PasswordResetToken {
   @@index([userId])
   @@index([tokenHash])
   @@map("password_reset_tokens")
+}
+
+model Profile {
+  id          String   @id @default(uuid())
+  userId      String   @unique @map("user_id")
+  bio         String?
+  skills      String[] @default([])
+  githubUrl   String?  @map("github_url")
+  linkedinUrl String?  @map("linkedin_url")
+  twitterUrl  String?  @map("twitter_url")
+  websiteUrl  String?  @map("website_url")
+  dsaRating   Int      @default(1200) @map("dsa_rating")
+  cpRating    Int      @default(1200) @map("cp_rating")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
 }
 
 // ─────────────────────────────────────────────
@@ -263,6 +313,10 @@ model Contest {
   createdBy    User                 @relation("ContestCreator", fields: [createdById], references: [id])
   participants ContestParticipant[]
   leaderboardEntries LeaderboardEntry[]
+  quizQuestions QuizQuestion[]
+  systemDesignSubmissions SystemDesignSubmission[]
+  problems      Problem[]
+  codeSubmissions CodeSubmission[]
 
   @@index([slug])
   @@index([type, status])
@@ -275,6 +329,7 @@ model ContestParticipant {
   contestId   String            @map("contest_id")
   userId      String            @map("user_id")
   status      ParticipantStatus @default(REGISTERED)
+  isVirtual   Boolean           @default(false) @map("is_virtual")
   score       Int               @default(0)
   rank        Int?
   joinedAt    DateTime          @default(now()) @map("joined_at")
@@ -284,12 +339,60 @@ model ContestParticipant {
 
   contest Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+  quizAnswers QuizAnswer[]
 
   @@unique([contestId, userId])
   @@index([contestId])
   @@index([userId])
   @@index([contestId, score(sort: Desc)])
   @@map("contest_participants")
+}
+
+model QuizQuestion {
+  id         String   @id @default(uuid())
+  contestId  String   @map("contest_id")
+  text       String
+  points     Int      @default(1)
+  orderIndex Int      @map("order_index")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  contest Contest      @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  options QuizOption[]
+  answers QuizAnswer[]
+
+  @@index([contestId, orderIndex])
+  @@map("quiz_questions")
+}
+
+model QuizOption {
+  id         String  @id @default(uuid())
+  questionId String  @map("question_id")
+  text       String
+  isCorrect  Boolean @default(false) @map("is_correct")
+  orderIndex Int     @map("order_index")
+
+  question QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answers  QuizAnswer[]
+
+  @@index([questionId, orderIndex])
+  @@map("quiz_options")
+}
+
+model QuizAnswer {
+  id            String   @id @default(uuid())
+  participantId String   @map("participant_id")
+  questionId    String   @map("question_id")
+  optionId      String   @map("option_id")
+  isCorrect     Boolean  @map("is_correct")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  participant ContestParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  question    QuizQuestion       @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  option      QuizOption         @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@unique([participantId, questionId])
+  @@map("quiz_answers")
 }
 
 model LeaderboardEntry {
@@ -359,6 +462,102 @@ model Referral {
   @@index([referrerId])
   @@index([company])
   @@map("referrals")
+}
+
+model SystemDesignSubmission {
+  id          String   @id @default(uuid())
+  contestId   String   @map("contest_id")
+  userId      String   @map("user_id")
+  solution    String
+  diagramUrl  String?  @map("diagram_url")
+  submittedAt DateTime @default(now()) @map("submitted_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  contest Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([contestId, userId])
+  @@index([contestId])
+  @@map("system_design_submissions")
+}
+
+model Problem {
+  id           String            @id @default(uuid())
+  contestId    String            @map("contest_id")
+  title        String
+  slug         String
+  description  String
+  inputFormat  String            @map("input_format")
+  outputFormat String            @map("output_format")
+  difficulty   ProblemDifficulty @default(EASY)
+  points       Int               @default(100)
+  timeLimitMs  Int               @default(2000) @map("time_limit_ms")
+  memoryMb     Int               @default(256) @map("memory_mb")
+  starterCode  Json              @map("starter_code")
+  orderIndex   Int               @map("order_index")
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+
+  contest     Contest           @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  testCases   ProblemTestCase[]
+  submissions CodeSubmission[]
+
+  @@unique([contestId, slug])
+  @@index([contestId, orderIndex])
+  @@map("problems")
+}
+
+model ProblemTestCase {
+  id         String  @id @default(uuid())
+  problemId  String  @map("problem_id")
+  input      String
+  output     String
+  isSample   Boolean @default(false) @map("is_sample")
+  orderIndex Int     @map("order_index")
+
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@index([problemId, orderIndex])
+  @@map("problem_test_cases")
+}
+
+model CodeSubmission {
+  id          String            @id @default(uuid())
+  problemId   String            @map("problem_id")
+  contestId   String            @map("contest_id")
+  userId      String            @map("user_id")
+  language    CodeLanguage
+  sourceCode  String            @map("source_code")
+  verdict     SubmissionVerdict @default(PENDING)
+  score       Int               @default(0)
+  runtimeMs   Int?              @map("runtime_ms")
+  verdictDetails Json?          @map("verdict_details")
+  submittedAt DateTime          @default(now()) @map("submitted_at")
+
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  contest Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([problemId, userId])
+  @@index([contestId, userId])
+  @@map("code_submissions")
+}
+
+model RatingHistory {
+  id        String     @id @default(uuid())
+  userId    String     @map("user_id")
+  type      RatingType
+  rating    Int
+  delta     Int        @default(0)
+  contestId String?    @map("contest_id")
+  reason    String?
+  createdAt DateTime   @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type, createdAt(sort: Desc)])
+  @@map("rating_history")
 }
 
 // ─────────────────────────────────────────────

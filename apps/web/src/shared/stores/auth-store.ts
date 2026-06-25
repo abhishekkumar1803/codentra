@@ -17,7 +17,9 @@ function setAuthCookie(token: string | null) {
 
 interface AuthState {
   accessToken: string | null;
+  sessionReady: boolean;
   setAccessToken: (token: string | null) => void;
+  setSessionReady: (ready: boolean) => void;
   clearAuth: () => void;
 }
 
@@ -25,11 +27,13 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       accessToken: null,
+      sessionReady: false,
       setAccessToken: (token) => {
         setApiAccessToken(token);
         setAuthCookie(token);
         set({ accessToken: token });
       },
+      setSessionReady: (ready) => set({ sessionReady: ready }),
       clearAuth: () => {
         setApiAccessToken(null);
         setAuthCookie(null);

@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import type { Response } from 'express';
 import { PrismaService } from '../../common/database/prisma.service';
 import { BusinessException } from '../../common/exceptions/business.exception';
+import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import {
   comparePassword,
   generateToken,
@@ -32,6 +33,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
+    private readonly activityLogs: ActivityLogsService,
   ) {}
 
   async register(dto: RegisterDto, res: Response) {
@@ -49,6 +51,13 @@ export class AuthService {
         name: dto.name,
         passwordHash,
       },
+    });
+
+    void this.activityLogs.log({
+      userId: user.id,
+      action: 'user.register',
+      entityType: 'user',
+      entityId: user.id,
     });
 
     return this.issueTokens(user, res);
@@ -75,6 +84,13 @@ export class AuthService {
     await this.prisma.user.update({
       where: { id: user.id },
       data: { lastLoginAt: new Date() },
+    });
+
+    void this.activityLogs.log({
+      userId: user.id,
+      action: 'user.login',
+      entityType: 'user',
+      entityId: user.id,
     });
 
     return this.issueTokens(user, res);

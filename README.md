@@ -92,11 +92,24 @@ codentra/
 
 ## 🚧 Current Status
 
-* ✅ Product Architecture
-* ✅ Database Design
-* ✅ API Contracts
-* ✅ Project Planning
-* 🚧 Phase 1 Development
+* ✅ Phase 0 — Architecture & Planning
+* ✅ Phase 1 — Foundation (Landing, Auth, Subscription, Dashboards, Admin)
+* ✅ Phase 2 — Core Engagement (Contests, Quizzes, Leaderboards, Notifications)
+* ✅ Phase 3 — Career & Community (Jobs, Referrals, System Design)
+* 🚧 Phase 4 — Premium Services (next)
+
+---
+
+## 🏁 Local Development
+
+```bash
+pnpm install
+pnpm db:push      # sync schema to Postgres
+pnpm db:seed      # admin@codentra.dev / Admin123! + demo user + sample contests
+pnpm dev:clean    # start API (3001) + web (3000)
+```
+
+See [docs/LOCAL_SETUP.md](docs/LOCAL_SETUP.md) for full setup.
 
 ---
 

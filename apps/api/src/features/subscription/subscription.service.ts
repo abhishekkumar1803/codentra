@@ -6,6 +6,7 @@ import {
 import { SubscriptionStatus } from '@prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import { BusinessException } from '../../common/exceptions/business.exception';
+import { EmailService } from '../../infrastructure/email/email.service';
 import { RazorpayService } from '../razorpay/razorpay.service';
 import type { CreateSubscriptionDto } from './dto/subscription.dto';
 
@@ -16,6 +17,7 @@ export class SubscriptionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly razorpay: RazorpayService,
+    private readonly emailService: EmailService,
   ) {}
 
   async getMySubscription(userId: string) {
@@ -154,6 +156,13 @@ export class SubscriptionService {
         },
       }),
     ]);
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: subscription.userId },
+    });
+    if (user) {
+      void this.emailService.sendSubscriptionConfirmation(user.email, user.name);
+    }
   }
 
   async handleWebhookEvent(event: {
