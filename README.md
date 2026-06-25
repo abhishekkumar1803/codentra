@@ -1,85 +1,168 @@
-# Codentra
+# 🚀 Codentra
 
-Developer growth platform — **Learn. Compete. Grow.**
+> **Learn. Compete. Grow.**
 
-## Monorepo Structure
+Codentra is a modern developer growth platform designed to help software engineers prepare for technical interviews, participate in coding competitions, improve their skills, and accelerate their careers.
 
-```
+---
+
+## ✨ Vision
+
+Our mission is to build a complete ecosystem where developers can learn, compete, get mentored, discover opportunities, and grow throughout their careers.
+
+---
+
+## 🎯 Features
+
+### Community Membership (₹49/month)
+
+* 🏆 Weekly DSA Contests
+* ⚡ Competitive Programming Contests
+* 🏗️ System Design Challenges
+* 🧠 Technical Quizzes
+* 📊 Leaderboards & Rankings
+* 💼 Curated Job Openings
+* 🤝 Referral Board
+* 🎯 Community Challenges
+
+### Premium Services
+
+* 📄 Resume Reviews
+* 🎤 Mock Interviews
+* 💬 Career Guidance Sessions
+* 🔗 LinkedIn Profile Reviews
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* Next.js 15
+* TypeScript
+* Tailwind CSS
+* Shadcn UI
+* React Query
+* Zustand
+
+### Backend
+
+* NestJS
+* Prisma ORM
+* PostgreSQL
+
+### Infrastructure
+
+* Turborepo
+* pnpm Workspaces
+* Docker
+* Vercel
+* Railway
+* Neon PostgreSQL
+
+### Integrations
+
+* Razorpay
+* Google OAuth
+* Cloudinary
+* Resend
+
+---
+
+## 📁 Project Structure
+
+```text
 codentra/
 ├── apps/
-│   ├── api/          # NestJS backend (@codentra/api)
-│   └── web/          # Next.js 15 frontend (@codentra/web)
+│   ├── web/
+│   └── api/
+│
 ├── packages/
-│   ├── config/       # Shared ESLint, Prettier, TypeScript configs
-│   ├── types/        # Shared TypeScript types
-│   └── ui/           # Shared UI utilities and components
-├── docs/             # Architecture and planning documents
-└── turbo.json        # Turborepo pipeline config
+│   ├── ui/
+│   ├── config/
+│   ├── types/
+│   └── shared/
+│
+├── docs/
+│
+└── infra/
 ```
 
-## Prerequisites
+---
 
-- Node.js >= 20
-- pnpm >= 9
+## 🚧 Current Status
 
-```bash
-corepack enable
-corepack prepare pnpm@9.15.4 --activate
-```
+* ✅ Product Architecture
+* ✅ Database Design
+* ✅ API Contracts
+* ✅ Project Planning
+* 🚧 Phase 1 Development
 
-## Getting Started
+---
 
-```bash
-# Install dependencies
-pnpm install
+## 🗺️ Roadmap
 
-# Build shared packages
-pnpm build
+### Phase 1
 
-# Start all apps in development
-pnpm dev
-```
+* Landing Page
+* Authentication
+* Membership System
+* User Dashboard
+* Admin Dashboard
 
-| App | URL | Description |
-|-----|-----|-------------|
-| Web | http://localhost:3000 | Next.js frontend |
-| API | http://localhost:3001/api/v1/health | NestJS backend |
+### Phase 2
 
-## Scripts
+* DSA Contests
+* CP Contests
+* System Design Challenges
+* Tech Quizzes
+* Leaderboards
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start all apps in watch mode |
-| `pnpm build` | Build all packages and apps |
-| `pnpm lint` | Lint all packages and apps |
-| `pnpm typecheck` | Type-check all packages and apps |
-| `pnpm format` | Format all files with Prettier |
-| `pnpm format:check` | Check formatting |
+### Phase 3
 
-## Environment Variables
+* Jobs Board
+* Referral Board
+* Resume Reviews
+* Mock Interviews
+* Career Guidance
 
-Copy example env files before running:
+### Phase 4
 
-```bash
-cp apps/api/.env.example apps/api/.env
-cp apps/web/.env.example apps/web/.env.local
-```
+* Gamification
+* Achievements
+* XP System
+* Badges
 
-## Database (API)
+### Phase 5
 
-Prisma schema lives in `apps/api/prisma/`.
+* AI Features
+* Automated Contest Generation
+* Personalized Learning Paths
+* Analytics Dashboard
 
-```bash
-cd apps/api
-pnpm db:generate
-pnpm db:migrate
-```
+---
 
-## Git Hooks
+## 📌 Engineering Principles
 
-- **pre-commit:** Prettier check + ESLint
-- **commit-msg:** Conventional Commits via commitlint
+* Clean Architecture
+* SOLID Principles
+* Feature-Based Modules
+* Type Safety
+* Scalable Design
+* Performance First
+* Security by Default
 
-## Documentation
+---
 
-See [`docs/`](./docs/) for architecture, API contract, and implementation plan.
+## 🤝 Contributing
+
+Contributions, feature suggestions, and bug reports are always welcome.
+
+---
+
+## 📄 License
+
+This project is currently private and under active development.
+
+© Codentra. All Rights Reserved.
+
