@@ -1,0 +1,487 @@
+// Codentra Database Schema
+// Canonical source of truth — see docs/DATABASE.md for documentation
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────
+
+enum Role {
+  USER
+  MENTOR
+  ADMIN
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  EXPIRED
+}
+
+enum PaymentType {
+  SUBSCRIPTION
+  RESUME_REVIEW
+  MOCK_INTERVIEW
+  CAREER_CALL
+  LINKEDIN_REVIEW
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum ContestType {
+  DSA
+  COMPETITIVE_PROGRAMMING
+  SYSTEM_DESIGN
+  QUIZ
+}
+
+enum ContestStatus {
+  DRAFT
+  SCHEDULED
+  LIVE
+  ENDED
+}
+
+enum ParticipantStatus {
+  REGISTERED
+  IN_PROGRESS
+  SUBMITTED
+  DISQUALIFIED
+}
+
+enum LeaderboardPeriod {
+  CONTEST
+  WEEKLY
+  MONTHLY
+  ALL_TIME
+}
+
+enum JobType {
+  REMOTE
+  HYBRID
+  ONSITE
+}
+
+enum ReferralStatus {
+  OPEN
+  CLOSED
+}
+
+enum ServiceStatus {
+  PENDING
+  SCHEDULED
+  IN_REVIEW
+  COMPLETED
+  CANCELLED
+}
+
+enum NotificationType {
+  CONTEST_REMINDER
+  CONTEST_RESULT
+  SUBSCRIPTION
+  PAYMENT
+  SERVICE_UPDATE
+  SYSTEM
+}
+
+// ─────────────────────────────────────────────
+// Users & Auth
+// ─────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String
+  avatarUrl     String?   @map("avatar_url")
+  passwordHash  String?   @map("password_hash")
+  googleId      String?   @unique @map("google_id")
+  role          Role      @default(USER)
+  emailVerified Boolean   @default(false) @map("email_verified")
+  isActive      Boolean   @default(true) @map("is_active")
+  lastLoginAt   DateTime? @map("last_login_at")
+  deletedAt     DateTime? @map("deleted_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  refreshTokens       RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
+  subscription        Subscription?
+  payments            Payment[]
+  contestsCreated     Contest[]            @relation("ContestCreator")
+  contestParticipants ContestParticipant[]
+  leaderboardEntries  LeaderboardEntry[]
+  jobsPosted          Job[]                @relation("JobPoster")
+  referrals           Referral[]
+  resumeReviews       ResumeReview[]       @relation("ResumeReviewUser")
+  resumeReviewsGiven  ResumeReview[]       @relation("ResumeReviewer")
+  mockInterviews      MockInterview[]      @relation("MockInterviewUser")
+  mockInterviewsGiven MockInterview[]      @relation("MockInterviewMentor")
+  careerCalls         CareerCall[]         @relation("CareerCallUser")
+  careerCallsGiven    CareerCall[]         @relation("CareerCallMentor")
+  linkedinReviews     LinkedInReview[]     @relation("LinkedInReviewUser")
+  linkedinReviewsGiven LinkedInReview[]    @relation("LinkedInReviewer")
+  notifications       Notification[]
+  activityLogs        ActivityLog[]
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  tokenHash String    @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("refresh_tokens")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  tokenHash String    @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("password_reset_tokens")
+}
+
+// ─────────────────────────────────────────────
+// Subscriptions & Payments
+// ─────────────────────────────────────────────
+
+model Subscription {
+  id                     String             @id @default(uuid())
+  userId                 String             @unique @map("user_id")
+  status                 SubscriptionStatus @default(PENDING)
+  razorpaySubscriptionId String?            @unique @map("razorpay_subscription_id")
+  razorpayPlanId         String?            @map("razorpay_plan_id")
+  currentPeriodStart     DateTime           @map("current_period_start")
+  currentPeriodEnd       DateTime           @map("current_period_end")
+  cancelledAt            DateTime?          @map("cancelled_at")
+  createdAt              DateTime           @default(now()) @map("created_at")
+  updatedAt              DateTime           @updatedAt @map("updated_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments Payment[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([razorpaySubscriptionId])
+  @@map("subscriptions")
+}
+
+model Payment {
+  id                String        @id @default(uuid())
+  userId            String        @map("user_id")
+  subscriptionId    String?       @map("subscription_id")
+  type              PaymentType
+  amount            Int
+  currency          String        @default("INR")
+  status            PaymentStatus @default(PENDING)
+  razorpayOrderId   String?       @unique @map("razorpay_order_id")
+  razorpayPaymentId String?       @unique @map("razorpay_payment_id")
+  razorpaySignature String?       @map("razorpay_signature")
+  metadata          Json?
+  paidAt            DateTime?     @map("paid_at")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  user         User            @relation(fields: [userId], references: [id], onDelete: Restrict)
+  subscription Subscription?   @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  resumeReview ResumeReview?
+  mockInterview MockInterview?
+  careerCall   CareerCall?
+  linkedinReview LinkedInReview?
+
+  @@index([userId])
+  @@index([status])
+  @@index([razorpayOrderId])
+  @@index([type])
+  @@map("payments")
+}
+
+model WebhookEvent {
+  id          String   @id @default(uuid())
+  provider    String
+  eventId     String   @unique @map("event_id")
+  eventType   String   @map("event_type")
+  payload     Json
+  processedAt DateTime @default(now()) @map("processed_at")
+
+  @@index([provider])
+  @@map("webhook_events")
+}
+
+// ─────────────────────────────────────────────
+// Contests & Leaderboards
+// ─────────────────────────────────────────────
+
+model Contest {
+  id              String        @id @default(uuid())
+  title           String
+  slug            String        @unique
+  description     String
+  type            ContestType
+  status          ContestStatus @default(DRAFT)
+  startTime       DateTime      @map("start_time")
+  endTime         DateTime      @map("end_time")
+  durationMinutes Int           @map("duration_minutes")
+  maxParticipants Int?          @map("max_participants")
+  createdById     String        @map("created_by_id")
+  deletedAt       DateTime?     @map("deleted_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  createdBy    User                 @relation("ContestCreator", fields: [createdById], references: [id])
+  participants ContestParticipant[]
+  leaderboardEntries LeaderboardEntry[]
+
+  @@index([slug])
+  @@index([type, status])
+  @@index([startTime])
+  @@map("contests")
+}
+
+model ContestParticipant {
+  id          String            @id @default(uuid())
+  contestId   String            @map("contest_id")
+  userId      String            @map("user_id")
+  status      ParticipantStatus @default(REGISTERED)
+  score       Int               @default(0)
+  rank        Int?
+  joinedAt    DateTime          @default(now()) @map("joined_at")
+  submittedAt DateTime?         @map("submitted_at")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  contest Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([contestId, userId])
+  @@index([contestId])
+  @@index([userId])
+  @@index([contestId, score(sort: Desc)])
+  @@map("contest_participants")
+}
+
+model LeaderboardEntry {
+  id          String            @id @default(uuid())
+  userId      String            @map("user_id")
+  contestId   String?           @map("contest_id")
+  period      LeaderboardPeriod
+  score       Int               @default(0)
+  rank        Int
+  periodStart DateTime?         @map("period_start")
+  periodEnd   DateTime?         @map("period_end")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contest Contest? @relation(fields: [contestId], references: [id], onDelete: Cascade)
+
+  @@index([period, rank])
+  @@index([contestId, rank])
+  @@index([userId])
+  @@map("leaderboard_entries")
+}
+
+// ─────────────────────────────────────────────
+// Jobs & Referrals
+// ─────────────────────────────────────────────
+
+model Job {
+  id          String    @id @default(uuid())
+  title       String
+  company     String
+  description String
+  location    String?
+  jobType     JobType   @map("job_type")
+  salaryMin   Int?      @map("salary_min")
+  salaryMax   Int?      @map("salary_max")
+  applyUrl    String    @map("apply_url")
+  isActive    Boolean   @default(true) @map("is_active")
+  postedById  String    @map("posted_by_id")
+  deletedAt   DateTime? @map("deleted_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  postedBy User @relation("JobPoster", fields: [postedById], references: [id])
+
+  @@index([isActive])
+  @@index([company])
+  @@map("jobs")
+}
+
+model Referral {
+  id           String         @id @default(uuid())
+  referrerId   String         @map("referrer_id")
+  company      String
+  roleTitle    String         @map("role_title")
+  description  String
+  requirements String?
+  status       ReferralStatus @default(OPEN)
+  contactEmail String?        @map("contact_email")
+  deletedAt    DateTime?      @map("deleted_at")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+
+  referrer User @relation(fields: [referrerId], references: [id], onDelete: Restrict)
+
+  @@index([status])
+  @@index([referrerId])
+  @@index([company])
+  @@map("referrals")
+}
+
+// ─────────────────────────────────────────────
+// Premium Services
+// ─────────────────────────────────────────────
+
+model ResumeReview {
+  id          String        @id @default(uuid())
+  userId      String        @map("user_id")
+  paymentId   String        @unique @map("payment_id")
+  reviewerId  String?       @map("reviewer_id")
+  status      ServiceStatus @default(PENDING)
+  resumeUrl   String        @map("resume_url")
+  feedback    String?
+  completedAt DateTime?     @map("completed_at")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  user     User     @relation("ResumeReviewUser", fields: [userId], references: [id])
+  payment  Payment  @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  reviewer User?    @relation("ResumeReviewer", fields: [reviewerId], references: [id])
+
+  @@map("resume_reviews")
+}
+
+model MockInterview {
+  id              String        @id @default(uuid())
+  userId          String        @map("user_id")
+  paymentId       String        @unique @map("payment_id")
+  mentorId        String?       @map("mentor_id")
+  status          ServiceStatus @default(PENDING)
+  scheduledAt     DateTime?     @map("scheduled_at")
+  durationMinutes Int           @default(60) @map("duration_minutes")
+  meetingLink     String?       @map("meeting_link")
+  feedback        String?
+  completedAt     DateTime?     @map("completed_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  user    User    @relation("MockInterviewUser", fields: [userId], references: [id])
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  mentor  User?   @relation("MockInterviewMentor", fields: [mentorId], references: [id])
+
+  @@map("mock_interviews")
+}
+
+model CareerCall {
+  id              String        @id @default(uuid())
+  userId          String        @map("user_id")
+  paymentId       String        @unique @map("payment_id")
+  mentorId        String?       @map("mentor_id")
+  status          ServiceStatus @default(PENDING)
+  scheduledAt     DateTime?     @map("scheduled_at")
+  durationMinutes Int           @default(30) @map("duration_minutes")
+  meetingLink     String?       @map("meeting_link")
+  notes           String?
+  completedAt     DateTime?     @map("completed_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  user    User    @relation("CareerCallUser", fields: [userId], references: [id])
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  mentor  User?   @relation("CareerCallMentor", fields: [mentorId], references: [id])
+
+  @@map("career_calls")
+}
+
+model LinkedInReview {
+  id          String        @id @default(uuid())
+  userId      String        @map("user_id")
+  paymentId   String        @unique @map("payment_id")
+  reviewerId  String?       @map("reviewer_id")
+  status      ServiceStatus @default(PENDING)
+  linkedinUrl String        @map("linkedin_url")
+  feedback    String?
+  completedAt DateTime?     @map("completed_at")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  user     User    @relation("LinkedInReviewUser", fields: [userId], references: [id])
+  payment  Payment @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  reviewer User?   @relation("LinkedInReviewer", fields: [reviewerId], references: [id])
+
+  @@map("linkedin_reviews")
+}
+
+// ─────────────────────────────────────────────
+// Notifications & Activity Logs
+// ─────────────────────────────────────────────
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String           @map("user_id")
+  type      NotificationType
+  title     String
+  body      String
+  metadata  Json?
+  readAt    DateTime?        @map("read_at")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("notifications")
+}
+
+model ActivityLog {
+  id         String   @id @default(uuid())
+  userId     String?  @map("user_id")
+  action     String
+  entityType String?  @map("entity_type")
+  entityId   String?  @map("entity_id")
+  metadata   Json?
+  ipAddress  String?  @map("ip_address")
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt(sort: Desc)])
+  @@index([entityType, entityId])
+  @@map("activity_logs")
+}
