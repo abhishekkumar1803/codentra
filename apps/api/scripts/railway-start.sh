@@ -4,30 +4,18 @@ set -eu
 cd "$(dirname "$0")/.."
 
 if [ -z "${DATABASE_URL:-}" ]; then
-  echo "[railway-start] ERROR: DATABASE_URL is not set"
+  echo "[railway-start] ERROR: DATABASE_URL is not set in Railway variables"
   exit 1
 fi
 
-# Neon: use direct URL for migrations when provided (pooler can fail migrate deploy)
 MIGRATE_URL="${DATABASE_URL_DIRECT:-$DATABASE_URL}"
-echo "[railway-start] Running prisma migrate deploy..."
-#!/usr/bin/env sh
-set -eu
-
-cd "$(dirname "$0")/.."
-
-if [ -z "${DATABASE_URL:-}" ]; then
-  echo "[railway-start] ERROR: DATABASE_URL is not set"
-  exit 1
+PRISMA_BIN="../../node_modules/.bin/prisma"
+if [ ! -x "$PRISMA_BIN" ]; then
+  PRISMA_BIN="npx prisma"
 fi
 
-# Neon: use direct URL for migrations when provided (pooler can fail migrate deploy)
-MIGRATE_URL="${DATABASE_URL_DIRECT:-$DATABASE_URL}"
 echo "[railway-start] Running prisma migrate deploy..."
-DATABASE_URL="$MIGRATE_URL" npx prisma migrate deploy
-
-echo "[railway-start] Starting API on port ${PORT:-3001}..."
-exec node dist/main.js
+DATABASE_URL="$MIGRATE_URL" "$PRISMA_BIN" migrate deploy
 
 echo "[railway-start] Starting API on port ${PORT:-3001}..."
 exec node dist/main.js
