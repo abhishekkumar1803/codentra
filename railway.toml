@@ -1,0 +1,11 @@
+# Codentra API — Railway staging/production deploy
+# Web (@codentra/web) should deploy on Vercel, not Railway.
+
+[build]
+buildCommand = "pnpm install --frozen-lockfile && pnpm --filter @codentra/api build"
+
+[deploy]
+startCommand = "cd apps/api && pnpm exec prisma migrate deploy && node dist/main.js"
+healthcheckPath = "/api/v1/health"
+healthcheckTimeout = 120
+restartPolicyType = "ON_FAILURE"
