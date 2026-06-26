@@ -5,9 +5,12 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  const port = Number(process.env.PORT ?? 3001);
+  console.log(`[codentra-api] Bootstrapping on 0.0.0.0:${port}...`);
   console.log(
-    `[codentra-api] Bootstrapping on port ${process.env.PORT ?? 3001}...`,
+    `[codentra-api] Env: DATABASE_URL=${process.env.DATABASE_URL ? 'set' : 'MISSING'}, JWT_SECRET=${process.env.JWT_SECRET ? 'set' : 'MISSING'}`,
   );
+
   const app = await NestFactory.create(AppModule, { rawBody: true });
 
   app.use(helmet());
@@ -27,9 +30,10 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   });
 
-  const port = process.env.PORT ?? 3001;
   await app.listen(port, '0.0.0.0');
-  console.log(`[codentra-api] Listening on 0.0.0.0:${port} (health: /api/v1/health)`);
+  console.log(
+    `[codentra-api] Listening on 0.0.0.0:${port} (health: /api/v1/health)`,
+  );
 }
 
 void bootstrap().catch((error) => {

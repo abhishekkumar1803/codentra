@@ -6,17 +6,16 @@ export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
-  async onModuleInit() {
-    try {
-      await this.$connect();
-    } catch (error) {
+  onModuleInit() {
+    // Connect in background so Railway healthcheck can pass while DB warms up.
+    void this.$connect().catch((error) => {
       const message =
         error instanceof Error ? error.message : 'Unknown database error';
       console.error(
-        `[PrismaService] Failed to connect. Check DATABASE_URL (remove channel_binding=require for Railway). Error: ${message}`,
+        `[PrismaService] Initial DB connect failed (will retry on query). ` +
+          `Check DATABASE_URL — remove channel_binding=require on Railway. Error: ${message}`,
       );
-      throw error;
-    }
+    });
   }
 
   async onModuleDestroy() {
