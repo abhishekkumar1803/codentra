@@ -4,6 +4,10 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 
+process.on('unhandledRejection', (reason) => {
+  console.error('[codentra-api] Unhandled rejection:', reason);
+});
+
 async function bootstrap() {
   const port = Number(process.env.PORT ?? 3001);
   console.log(`[codentra-api] Bootstrapping on 0.0.0.0:${port}...`);
