@@ -22,6 +22,14 @@ export class JudgeService implements OnModuleInit {
   }
 
   onModuleInit() {
+    const requested = this.config.get<string>('JUDGE_PROVIDER', 'judge0');
+    if (requested === 'judge0' && this.provider === 'mock') {
+      this.logger.warn(
+        'JUDGE_PROVIDER=judge0 but JUDGE0_API_URL is unset — using mock judge until Judge0 is configured',
+      );
+      return;
+    }
+
     if (this.provider === 'judge0' && this.judge0) {
       const apiUrl = resolveJudge0Settings(this.config).apiUrl;
       this.logger.log(`Judge provider: Judge0 CE at ${apiUrl}`);

@@ -8,10 +8,11 @@ describe('resolveJudge0Settings', () => {
         values[key] ?? defaultValue,
     }) as ConfigService;
 
-  it('defaults to judge0 when JUDGE_PROVIDER is unset', () => {
-    expect(() =>
-      resolveJudge0Settings(mockConfig({})),
-    ).toThrow(/JUDGE0_API_URL is required/);
+  it('defaults to mock when JUDGE_PROVIDER is unset and no URL', () => {
+    expect(resolveJudge0Settings(mockConfig({}))).toEqual({
+      provider: 'mock',
+      apiUrl: '',
+    });
   });
 
   it('returns mock only when JUDGE_PROVIDER=mock', () => {
@@ -20,12 +21,10 @@ describe('resolveJudge0Settings', () => {
     ).toEqual({ provider: 'mock', apiUrl: '' });
   });
 
-  it('throws when judge0 provider is set without JUDGE0_API_URL', () => {
-    expect(() =>
-      resolveJudge0Settings(
-        mockConfig({ JUDGE_PROVIDER: 'judge0' }),
-      ),
-    ).toThrow(/JUDGE0_API_URL is required/);
+  it('falls back to mock when judge0 provider is set without JUDGE0_API_URL', () => {
+    expect(
+      resolveJudge0Settings(mockConfig({ JUDGE_PROVIDER: 'judge0' })),
+    ).toEqual({ provider: 'mock', apiUrl: '' });
   });
 
   it('reads URL and optional key from environment', () => {

@@ -17,10 +17,8 @@ export function resolveJudge0Settings(config: ConfigService): Judge0Settings {
 
   const apiUrl = config.get<string>('JUDGE0_API_URL')?.trim();
   if (!apiUrl) {
-    throw new Error(
-      'JUDGE0_API_URL is required when JUDGE_PROVIDER=judge0. ' +
-        'Local dev: http://localhost:2358 (run `pnpm judge:up`).',
-    );
+    // Allow API boot on staging before Judge0 is hosted (falls back to mock judge).
+    return { provider: 'mock', apiUrl: '' };
   }
 
   const apiKey = config.get<string>('JUDGE0_API_KEY')?.trim() || undefined;
