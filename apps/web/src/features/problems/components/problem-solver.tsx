@@ -3,19 +3,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useQueryClient } from '@tanstack/react-query';
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Skeleton,
-  cn,
-} from '@codentra/ui';
+import { Button, Skeleton, cn } from '@codentra/ui';
 import type { CodeSubmission, RunCodeResult } from '@codentra/types';
 import { useContest, useJoinContest } from '@/features/contests/hooks/use-contests';
 import { ApiError } from '@/shared/lib/api-client';
 import { CodeEditor } from './code-editor';
+import { SubmissionDetailModal } from './submission-detail-modal';
 import {
   useProblem,
   useProblemSubmissions,
@@ -30,6 +23,14 @@ const LANGUAGES = [
   { value: 'JAVA', label: 'Java' },
   { value: 'JAVASCRIPT', label: 'JavaScript' },
 ] as const;
+
+type LanguageValue = (typeof LANGUAGES)[number]['value'];
+
+const VALID_LANGUAGES = new Set<string>(LANGUAGES.map((l) => l.value));
+
+function isValidLanguage(value: string): value is LanguageValue {
+  return VALID_LANGUAGES.has(value);
+}
 
 const VERDICT_STYLES: Record<string, string> = {
   ACCEPTED: 'text-green-600',
@@ -48,6 +49,18 @@ function codeStorageKey(
   language: string,
 ) {
   return `codentra:code:${contestSlug}:${problemSlug}:${language}`;
+}
+
+function languageStorageKey(contestSlug: string, problemSlug: string) {
+  return `codentra:lang:${contestSlug}:${problemSlug}`;
+}
+
+function readStoredLanguage(contestSlug: string, problemSlug: string) {
+  if (typeof window === 'undefined') return 'PYTHON';
+  const stored = localStorage.getItem(
+    languageStorageKey(contestSlug, problemSlug),
+  );
+  return stored && isValidLanguage(stored) ? stored : 'PYTHON';
 }
 
 export function ProblemSolverView({
@@ -79,14 +92,20 @@ export function ProblemSolverView({
   const joinContest = useJoinContest();
   const queryClient = useQueryClient();
 
-  const [language, setLanguage] = useState('PYTHON');
+  const [language, setLanguage] = useState(() =>
+    readStoredLanguage(contestSlug, problemSlug),
+  );
   const [sourceCode, setSourceCode] = useState('');
   const [codeInitialized, setCodeInitialized] = useState(false);
+  const [hideProblem, setHideProblem] = useState(false);
   const [activeCaseIndex, setActiveCaseIndex] = useState(0);
   const [customInputs, setCustomInputs] = useState<string[]>(['']);
   const [runResult, setRunResult] = useState<RunCodeResult | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [activeSubmissionId, setActiveSubmissionId] = useState<string | null>(
+    null,
+  );
+  const [modalSubmissionId, setModalSubmissionId] = useState<string | null>(
     null,
   );
   const [bottomTab, setBottomTab] = useState<BottomTab>('testcase');
@@ -98,16 +117,27 @@ export function ProblemSolverView({
     pendingSubmitId,
   );
 
-  const activeSubmitResult = polledSubmission ?? null;
+  const { data: modalSubmission, isLoading: modalLoading } = useSubmission(
+    contestSlug,
+    problemSlug,
+    modalSubmissionId,
+  );
 
   useEffect(() => {
     if (!problem || codeInitialized) return;
+
+    const lang = readStoredLanguage(contestSlug, problemSlug);
+    if (lang !== language) {
+      setLanguage(lang);
+      return;
+    }
+
     const stored = localStorage.getItem(
-      codeStorageKey(contestSlug, problemSlug, language),
+      codeStorageKey(contestSlug, problemSlug, lang),
     );
     const starter =
       stored ??
-      problem.starterCode[language] ??
+      problem.starterCode[lang] ??
       problem.starterCode.PYTHON ??
       '';
     setSourceCode(starter);
@@ -126,6 +156,13 @@ export function ProblemSolverView({
   }, [sourceCode, language, contestSlug, problemSlug, codeInitialized]);
 
   useEffect(() => {
+    localStorage.setItem(
+      languageStorageKey(contestSlug, problemSlug),
+      language,
+    );
+  }, [language, contestSlug, problemSlug]);
+
+  useEffect(() => {
     if (!polledSubmission || polledSubmission.verdict === 'PENDING') return;
     setPendingSubmitId(null);
     setActiveSubmissionId(polledSubmission.id);
@@ -142,10 +179,14 @@ export function ProblemSolverView({
   }, [polledSubmission, contestSlug, problemSlug, queryClient]);
 
   const handleLanguageChange = (next: string) => {
-    if (!problem) return;
+    if (!problem || !isValidLanguage(next)) return;
     localStorage.setItem(
       codeStorageKey(contestSlug, problemSlug, language),
       sourceCode,
+    );
+    localStorage.setItem(
+      languageStorageKey(contestSlug, problemSlug),
+      next,
     );
     setLanguage(next);
     const stored = localStorage.getItem(
@@ -202,15 +243,16 @@ export function ProblemSolverView({
       key: `custom-${i}`,
       label: `Case ${i + 1}`,
       input,
-      isSample: false,
     }));
-    return custom.length ? custom : [{ key: 'empty', label: 'Case 1', input: '', isSample: false }];
+    return custom.length
+      ? custom
+      : [{ key: 'empty', label: 'Case 1', input: '' }];
   }, [customInputs]);
 
   const activeInput = testcaseTabs[activeCaseIndex]?.input ?? '';
 
   if (contestLoading) {
-    return <Skeleton className="h-[70vh] w-full" />;
+    return <Skeleton className="h-full w-full" />;
   }
 
   if (problemsLocked && contest) {
@@ -223,34 +265,34 @@ export function ProblemSolverView({
         >
           ← Back to contest
         </Link>
-        <Card className="border-amber-200 bg-amber-50">
-          <CardHeader>
-            <CardTitle className="text-lg">Registration required</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-amber-900">
-              {isEnded
-                ? 'Virtual join this ended contest to access problems and practice.'
-                : 'Register for this live contest to view and solve problems.'}
-            </p>
-            <Button onClick={handleRegister} disabled={joinContest.isPending}>
-              {joinContest.isPending
-                ? 'Joining...'
-                : isEnded
-                  ? 'Virtual join'
-                  : 'Register for contest'}
-            </Button>
-            {actionError && (
-              <p className="text-sm text-red-600">{actionError}</p>
-            )}
-          </CardContent>
-        </Card>
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-6">
+          <h2 className="text-lg font-semibold">Registration required</h2>
+          <p className="mt-2 text-sm text-amber-900">
+            {isEnded
+              ? 'Virtual join this ended contest to access problems.'
+              : 'Register for this live contest to view and solve problems.'}
+          </p>
+          <Button
+            className="mt-4"
+            onClick={handleRegister}
+            disabled={joinContest.isPending}
+          >
+            {joinContest.isPending
+              ? 'Joining...'
+              : isEnded
+                ? 'Virtual join'
+                : 'Register for contest'}
+          </Button>
+          {actionError && (
+            <p className="mt-2 text-sm text-red-600">{actionError}</p>
+          )}
+        </div>
       </div>
     );
   }
 
   if (problemLoading || !problem) {
-    return <Skeleton className="h-[70vh] w-full" />;
+    return <Skeleton className="h-full w-full" />;
   }
 
   const isLive = problem.contestStatus === 'LIVE';
@@ -299,118 +341,133 @@ export function ProblemSolverView({
   };
 
   const displaySubmission =
-    activeSubmitResult ??
+    polledSubmission ??
     submissions?.items.find((s) => s.id === activeSubmissionId) ??
     null;
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] min-h-[640px] flex-col gap-3">
-      {actionError && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
-          {actionError}
-        </div>
-      )}
+    <>
+      <div className="flex h-full min-h-0 flex-col">
+        {actionError && (
+          <div className="shrink-0 border-b border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
+            {actionError}
+          </div>
+        )}
 
-      {!isRegistered && (
-        <Card className="border-amber-200 bg-amber-50">
-          <CardContent className="flex flex-wrap items-center justify-between gap-3 py-3">
-            <p className="text-sm text-amber-900">
-              Register to run and submit solutions.
-            </p>
-            <Button size="sm" onClick={handleRegister} disabled={joinContest.isPending}>
+        {!isRegistered && (
+          <div className="shrink-0 flex items-center justify-between gap-3 border-b border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-900">
+            <span>Register to run and submit solutions.</span>
+            <Button
+              size="sm"
+              onClick={handleRegister}
+              disabled={joinContest.isPending}
+            >
               {joinContest.isPending ? 'Joining...' : 'Register'}
             </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      {isRegistered && isPracticeMode && (
-        <div className="rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm text-blue-900">
-          {isVirtual
-            ? 'Virtual mode — submissions do not affect rankings.'
-            : 'Upsolve mode — practice only.'}
-        </div>
-      )}
-
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <Link
-            href={`/contests/${contestSlug}`}
-            className="text-sm text-muted-foreground hover:text-foreground"
-          >
-            ← {contest?.title ?? 'Contest'}
-          </Link>
-          <h1 className="text-xl font-bold">{problem.title}</h1>
-          <div className="mt-1 flex flex-wrap gap-2 text-xs">
-            <span className="rounded-full bg-muted px-2 py-0.5 font-medium">
-              {problem.difficulty}
-            </span>
-            <span className="rounded-full bg-muted px-2 py-0.5 font-medium">
-              {problem.points} pts
-            </span>
-            {problem.isSolved && (
-              <span className="rounded-full bg-green-100 px-2 py-0.5 font-medium text-green-800">
-                Solved
-              </span>
-            )}
           </div>
-        </div>
-      </div>
+        )}
 
-      <div className="grid min-h-0 flex-1 gap-3 lg:grid-cols-2">
-        {/* Problem panel */}
-        <Card className="flex min-h-0 flex-col overflow-hidden">
-          <CardHeader className="shrink-0 border-b py-3">
-            <CardTitle className="text-base">Description</CardTitle>
-          </CardHeader>
-          <CardContent className="min-h-0 flex-1 overflow-y-auto p-4 text-sm leading-relaxed">
-            <p className="whitespace-pre-wrap">{problem.description}</p>
-            <div className="mt-4 space-y-2">
-              <p>
-                <span className="font-semibold">Input: </span>
-                {problem.inputFormat}
-              </p>
-              <p>
-                <span className="font-semibold">Output: </span>
-                {problem.outputFormat}
-              </p>
-              <p className="text-muted-foreground">
-                Time limit: {problem.timeLimitMs}ms · Memory: {problem.memoryMb}
-                MB
-              </p>
+        {isRegistered && isPracticeMode && (
+          <div className="shrink-0 border-b border-blue-200 bg-blue-50 px-4 py-2 text-sm text-blue-900">
+            {isVirtual
+              ? 'Virtual mode — submissions do not affect rankings.'
+              : 'Upsolve mode — practice only.'}
+          </div>
+        )}
+
+        {/* Top bar */}
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b px-3 py-2">
+          <div className="min-w-0 flex-1">
+            <Link
+              href={`/contests/${contestSlug}`}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              ← {contest?.title ?? 'Contest'}
+            </Link>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="truncate text-lg font-bold">{problem.title}</h1>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
+                {problem.difficulty}
+              </span>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
+                {problem.points} pts
+              </span>
+              {problem.isSolved && (
+                <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                  Solved
+                </span>
+              )}
             </div>
-            {sampleCases.length > 0 && (
-              <div className="mt-4 space-y-2">
-                <p className="font-semibold">Examples</p>
-                {sampleCases.map((tc, i) => (
-                  <div
-                    key={tc.id}
-                    className="rounded-md border bg-muted/30 p-3 font-mono text-xs"
-                  >
-                    <p className="mb-1 font-sans font-medium">Example {i + 1}</p>
-                    <p>Input: {tc.input}</p>
-                    <p>Output: {tc.output}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-            {problem.hiddenTestCaseCount > 0 && (
-              <p className="mt-3 text-xs text-muted-foreground">
-                + {problem.hiddenTestCaseCount} hidden test case
-                {problem.hiddenTestCaseCount > 1 ? 's' : ''} on submit.
-              </p>
-            )}
-          </CardContent>
-        </Card>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="shrink-0"
+            onClick={() => setHideProblem((v) => !v)}
+          >
+            {hideProblem ? 'Show problem' : 'Hide problem'}
+          </Button>
+        </div>
 
-        {/* Editor workspace */}
-        <div className="flex min-h-0 flex-col gap-2">
-          <Card className="flex min-h-0 flex-1 flex-col overflow-hidden">
-            <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b px-3 py-2">
+        {/* Main split — LeetCode-style */}
+        <div className="flex min-h-0 flex-1">
+          {/* Problem description */}
+          {!hideProblem && (
+            <div className="flex w-full min-w-0 flex-col border-r lg:w-[42%] lg:max-w-xl">
+              <div className="shrink-0 border-b px-4 py-2 text-sm font-medium">
+                Description
+              </div>
+              <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3 text-sm leading-relaxed">
+                <p className="whitespace-pre-wrap">{problem.description}</p>
+                <div className="mt-4 space-y-2">
+                  <p>
+                    <span className="font-semibold">Input: </span>
+                    {problem.inputFormat}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Output: </span>
+                    {problem.outputFormat}
+                  </p>
+                  <p className="text-muted-foreground">
+                    Time limit: {problem.timeLimitMs}ms · Memory:{' '}
+                    {problem.memoryMb}MB
+                  </p>
+                </div>
+                {sampleCases.length > 0 && (
+                  <div className="mt-4 space-y-2">
+                    <p className="font-semibold">Examples</p>
+                    {sampleCases.map((tc, i) => (
+                      <div
+                        key={tc.id}
+                        className="rounded-md border bg-muted/30 p-3 font-mono text-xs"
+                      >
+                        <p className="mb-1 font-sans font-medium">
+                          Example {i + 1}
+                        </p>
+                        <p>Input: {tc.input}</p>
+                        <p>Output: {tc.output}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {problem.hiddenTestCaseCount > 0 && (
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    + {problem.hiddenTestCaseCount} hidden test case
+                    {problem.hiddenTestCaseCount > 1 ? 's' : ''} on submit.
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Editor + console */}
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+            {/* Editor toolbar */}
+            <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b bg-muted/20 px-3 py-2">
               <select
                 value={language}
                 onChange={(e) => handleLanguageChange(e.target.value)}
-                className="rounded-md border bg-background px-2 py-1 text-sm"
+                className="rounded-md border bg-background px-2 py-1.5 text-sm"
               >
                 {LANGUAGES.map((lang) => (
                   <option key={lang.value} value={lang.value}>
@@ -436,11 +493,13 @@ export function ProblemSolverView({
                   disabled={!canRun || runCode.isPending}
                   onClick={() => void handleRun(true)}
                 >
-                  Run all samples
+                  Run all
                 </Button>
                 <Button
                   size="sm"
-                  disabled={!canSubmit || submitCode.isPending || !!pendingSubmitId}
+                  disabled={
+                    !canSubmit || submitCode.isPending || !!pendingSubmitId
+                  }
                   onClick={handleSubmit}
                 >
                   {submitCode.isPending || pendingSubmitId
@@ -449,7 +508,9 @@ export function ProblemSolverView({
                 </Button>
               </div>
             </div>
-            <div className="min-h-0 flex-1 p-2">
+
+            {/* Monaco — takes maximum vertical space */}
+            <div className="min-h-0 flex-1">
               <CodeEditor
                 language={language}
                 value={sourceCode}
@@ -457,94 +518,102 @@ export function ProblemSolverView({
                 height="100%"
               />
             </div>
-          </Card>
 
-          {/* Bottom panel — LeetCode-style tabs */}
-          <Card className="flex max-h-[240px] min-h-[180px] flex-col overflow-hidden">
-            <div className="flex shrink-0 border-b">
-              {(
-                [
-                  ['testcase', 'Testcase'],
-                  ['result', 'Test Result'],
-                  ['submissions', 'Submissions'],
-                ] as const
-              ).map(([tab, label]) => (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setBottomTab(tab)}
-                  className={cn(
-                    'px-4 py-2 text-sm font-medium',
-                    bottomTab === tab
-                      ? 'border-b-2 border-primary text-foreground'
-                      : 'text-muted-foreground hover:text-foreground',
-                  )}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            <CardContent className="min-h-0 flex-1 overflow-y-auto p-3 text-sm">
-              {bottomTab === 'testcase' && (
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-1">
-                    {testcaseTabs.map((tc, i) => (
+            {/* Bottom console */}
+            <div className="flex h-[220px] shrink-0 flex-col border-t bg-background">
+              <div className="flex shrink-0 border-b">
+                {(
+                  [
+                    ['testcase', 'Testcase'],
+                    ['result', 'Test Result'],
+                    ['submissions', 'Submissions'],
+                  ] as const
+                ).map(([tab, label]) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setBottomTab(tab)}
+                    className={cn(
+                      'px-4 py-2 text-sm font-medium',
+                      bottomTab === tab
+                        ? 'border-b-2 border-primary text-foreground'
+                        : 'text-muted-foreground hover:text-foreground',
+                    )}
+                  >
+                    {label}
+                    {tab === 'submissions' && submissions?.items.length
+                      ? ` (${submissions.items.length})`
+                      : ''}
+                  </button>
+                ))}
+              </div>
+              <div className="min-h-0 flex-1 overflow-y-auto p-3 text-sm">
+                {bottomTab === 'testcase' && (
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap gap-1">
+                      {testcaseTabs.map((tc, i) => (
+                        <Button
+                          key={tc.key}
+                          size="sm"
+                          variant={
+                            activeCaseIndex === i ? 'default' : 'outline'
+                          }
+                          onClick={() => setActiveCaseIndex(i)}
+                        >
+                          {tc.label}
+                        </Button>
+                      ))}
                       <Button
-                        key={tc.key}
                         size="sm"
-                        variant={activeCaseIndex === i ? 'default' : 'outline'}
-                        onClick={() => setActiveCaseIndex(i)}
+                        variant="outline"
+                        onClick={() => {
+                          setCustomInputs((prev) => [...prev, '']);
+                          setActiveCaseIndex(customInputs.length);
+                        }}
                       >
-                        {tc.label}
+                        +
                       </Button>
-                    ))}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        setCustomInputs((prev) => [...prev, '']);
-                        setActiveCaseIndex(customInputs.length);
+                    </div>
+                    <textarea
+                      value={activeInput}
+                      onChange={(e) => {
+                        const next = [...customInputs];
+                        next[activeCaseIndex] = e.target.value;
+                        setCustomInputs(next);
                       }}
-                    >
-                      +
-                    </Button>
+                      className="h-full min-h-[100px] w-full rounded-md border bg-background p-2 font-mono text-xs"
+                      placeholder="stdin input for Run"
+                    />
                   </div>
-                  <textarea
-                    value={activeInput}
-                    onChange={(e) => {
-                      const next = [...customInputs];
-                      next[activeCaseIndex] = e.target.value;
-                      setCustomInputs(next);
-                    }}
-                    className="min-h-[80px] w-full rounded-md border bg-background p-2 font-mono text-xs"
-                    placeholder="stdin input for Run"
+                )}
+
+                {bottomTab === 'result' && (
+                  <ResultPanel
+                    runResult={runResult}
+                    submission={displaySubmission}
+                    pending={!!pendingSubmitId}
+                    onViewSubmission={(id) => setModalSubmissionId(id)}
                   />
-                </div>
-              )}
+                )}
 
-              {bottomTab === 'result' && (
-                <ResultPanel
-                  runResult={runResult}
-                  submission={displaySubmission}
-                  pending={!!pendingSubmitId}
-                />
-              )}
-
-              {bottomTab === 'submissions' && (
-                <SubmissionsPanel
-                  items={submissions?.items ?? []}
-                  activeId={activeSubmissionId}
-                  onSelect={(id) => {
-                    setActiveSubmissionId(id);
-                    setBottomTab('result');
-                  }}
-                />
-              )}
-            </CardContent>
-          </Card>
+                {bottomTab === 'submissions' && (
+                  <SubmissionsPanel
+                    items={submissions?.items ?? []}
+                    onSelect={(id) => setModalSubmissionId(id)}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      <SubmissionDetailModal
+        submission={modalSubmission}
+        isLoading={modalLoading && !!modalSubmissionId}
+        onClose={() => setModalSubmissionId(null)}
+      />
+    </>
   );
 }
 
@@ -552,20 +621,21 @@ function ResultPanel({
   runResult,
   submission,
   pending,
+  onViewSubmission,
 }: {
   runResult: RunCodeResult | null;
   submission: CodeSubmission | null;
   pending: boolean;
+  onViewSubmission: (id: string) => void;
 }) {
   if (pending) {
     return (
       <p className={cn('font-medium', VERDICT_STYLES.PENDING)}>
-        Judging… (queued via BullMQ)
+        Judging your submission…
       </p>
     );
   }
 
-  // Run results take priority — submission history is shown via Submissions tab
   if (runResult?.mode === 'custom') {
     return (
       <div className="space-y-1">
@@ -576,7 +646,9 @@ function ResultPanel({
             {runResult.runtimeMs}ms
           </span>
         </p>
-        <p className="font-mono text-xs">Output: {runResult.output || '(empty)'}</p>
+        <p className="font-mono text-xs">
+          Output: {runResult.output || '(empty)'}
+        </p>
         {runResult.message && (
           <p className="text-xs text-red-600">{runResult.message}</p>
         )}
@@ -603,11 +675,11 @@ function ResultPanel({
             </p>
             <p>Input: {r.input}</p>
             <p>Output: {r.output || '(empty)'}</p>
-            {r.message && (
-              <p className="text-red-600">{r.message}</p>
-            )}
+            {r.message && <p className="text-red-600">{r.message}</p>}
             {r.verdict !== 'ACCEPTED' && (
-              <p className="text-muted-foreground">Expected: {r.expectedOutput}</p>
+              <p className="text-muted-foreground">
+                Expected: {r.expectedOutput}
+              </p>
             )}
           </div>
         ))}
@@ -618,7 +690,9 @@ function ResultPanel({
   if (submission) {
     return (
       <div className="space-y-2">
-        <p className="text-xs font-medium text-muted-foreground">Submission result</p>
+        <p className="text-xs font-medium text-muted-foreground">
+          Submission result
+        </p>
         <p className={cn('font-semibold', VERDICT_STYLES[submission.verdict])}>
           {submission.verdict}
           {submission.runtimeMs != null && submission.verdict === 'ACCEPTED' && (
@@ -646,6 +720,13 @@ function ResultPanel({
             <p>Got: {submission.verdictDetails.actualOutput}</p>
           </div>
         )}
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => onViewSubmission(submission.id)}
+        >
+          View submitted code
+        </Button>
       </div>
     );
   }
@@ -659,11 +740,9 @@ function ResultPanel({
 
 function SubmissionsPanel({
   items,
-  activeId,
   onSelect,
 }: {
   items: CodeSubmission[];
-  activeId: string | null;
   onSelect: (id: string) => void;
 }) {
   if (!items.length) {
@@ -677,17 +756,16 @@ function SubmissionsPanel({
           <button
             type="button"
             onClick={() => onSelect(s.id)}
-            className={cn(
-              'flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left hover:bg-muted/50',
-              activeId === s.id && 'bg-muted/50',
-            )}
+            className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left hover:bg-muted/50"
           >
             <span className={cn('font-medium', VERDICT_STYLES[s.verdict])}>
               {s.verdict}
             </span>
             <span className="text-xs text-muted-foreground">
               {s.language} · {new Date(s.submittedAt).toLocaleString('en-IN')}
-              {s.runtimeMs != null && s.verdict === 'ACCEPTED' && ` · ${s.runtimeMs}ms`}
+              {s.runtimeMs != null && s.verdict === 'ACCEPTED'
+                ? ` · ${s.runtimeMs}ms`
+                : ''}
             </span>
           </button>
         </li>

@@ -29,7 +29,7 @@ export function CodeEditor({
   readOnly?: boolean;
 }) {
   return (
-    <div className="h-full min-h-[320px] overflow-hidden rounded-md border border-zinc-800">
+    <div className="h-full min-h-[200px] overflow-hidden rounded-none border-0 border-zinc-800">
       <Monaco
         height={height}
         language={MONACO_LANGUAGE[language] ?? 'plaintext'}
