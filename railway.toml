@@ -2,10 +2,10 @@
 # Web (@codentra/web) should deploy on Vercel, not Railway.
 
 [build]
-buildCommand = "pnpm install --frozen-lockfile && pnpm --filter @codentra/api build"
+buildCommand = "pnpm install --frozen-lockfile && pnpm --filter @codentra/api build && cd apps/api && npx prisma migrate deploy"
 
 [deploy]
-startCommand = "sh apps/api/scripts/railway-start.sh"
+startCommand = "node apps/api/dist/main.js"
 healthcheckPath = "/api/v1/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"

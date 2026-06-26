@@ -5,6 +5,9 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  console.log(
+    `[codentra-api] Bootstrapping on port ${process.env.PORT ?? 3001}...`,
+  );
   const app = await NestFactory.create(AppModule, { rawBody: true });
 
   app.use(helmet());
