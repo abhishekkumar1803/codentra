@@ -34,50 +34,65 @@ export class SubmissionJudgeQueueService
       return;
     }
 
-    this.connection = {
-      url: redisUrl,
-      maxRetriesPerRequest: null,
-    };
+    try {
+      this.connection = {
+        url: redisUrl,
+        maxRetriesPerRequest: null,
+      };
 
-    this.queue = new Queue<SubmissionJudgeJobData>(SUBMISSION_JUDGE_QUEUE, {
-      connection: this.connection,
-      defaultJobOptions: {
-        attempts: 3,
-        backoff: { type: 'exponential', delay: 2000 },
-        removeOnComplete: 500,
-        removeOnFail: 1000,
-      },
-    });
-
-    const runWorker =
-      this.config.get<string>('ENABLE_SUBMISSION_WORKER', 'true') === 'true';
-
-    if (runWorker) {
-      const concurrency = Number(
-        this.config.get<string>('SUBMISSION_WORKER_CONCURRENCY', '5'),
-      );
-
-      this.worker = new Worker<SubmissionJudgeJobData>(
-        SUBMISSION_JUDGE_QUEUE,
-        async (job) => {
-          await this.judging.processSubmission(job.data.submissionId);
+      this.queue = new Queue<SubmissionJudgeJobData>(SUBMISSION_JUDGE_QUEUE, {
+        connection: this.connection,
+        defaultJobOptions: {
+          attempts: 3,
+          backoff: { type: 'exponential', delay: 2000 },
+          removeOnComplete: 500,
+          removeOnFail: 1000,
         },
-        {
-          connection: { ...this.connection },
-          concurrency,
-        },
-      );
-
-      this.worker.on('failed', (job, err) => {
-        this.logger.error(
-          `Submission job ${job?.id} failed: ${err.message}`,
-          err.stack,
-        );
       });
 
-      this.logger.log(
-        `Submission judge worker started (concurrency=${concurrency})`,
+      const runWorker =
+        this.config.get<string>('ENABLE_SUBMISSION_WORKER', 'true') === 'true';
+
+      if (runWorker) {
+        const concurrency = Number(
+          this.config.get<string>('SUBMISSION_WORKER_CONCURRENCY', '5'),
+        );
+
+        this.worker = new Worker<SubmissionJudgeJobData>(
+          SUBMISSION_JUDGE_QUEUE,
+          async (job) => {
+            await this.judging.processSubmission(job.data.submissionId);
+          },
+          {
+            connection: { ...this.connection },
+            concurrency,
+          },
+        );
+
+        this.worker.on('failed', (job, err) => {
+          this.logger.error(
+            `Submission job ${job?.id} failed: ${err.message}`,
+            err.stack,
+          );
+        });
+
+        this.worker.on('error', (err) => {
+          this.logger.error(`Submission worker error: ${err.message}`, err.stack);
+        });
+
+        this.logger.log(
+          `Submission judge worker started (concurrency=${concurrency})`,
+        );
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unknown Redis error';
+      this.logger.error(
+        `BullMQ init failed — async submits disabled. Check REDIS_URL (use rediss:// for Upstash). ${message}`,
       );
+      this.connection = null;
+      this.queue = null;
+      this.worker = null;
     }
   }
 

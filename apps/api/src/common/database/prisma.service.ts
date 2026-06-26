@@ -7,7 +7,16 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   async onModuleInit() {
-    await this.$connect();
+    try {
+      await this.$connect();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unknown database error';
+      console.error(
+        `[PrismaService] Failed to connect. Check DATABASE_URL (remove channel_binding=require for Railway). Error: ${message}`,
+      );
+      throw error;
+    }
   }
 
   async onModuleDestroy() {

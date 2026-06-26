@@ -26,6 +26,7 @@ async function bootstrap() {
 
   const port = process.env.PORT ?? 3001;
   await app.listen(port, '0.0.0.0');
+  console.log(`[codentra-api] Listening on 0.0.0.0:${port} (health: /api/v1/health)`);
 }
 
 void bootstrap().catch((error) => {

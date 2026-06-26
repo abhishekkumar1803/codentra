@@ -5,7 +5,7 @@
 buildCommand = "pnpm install --frozen-lockfile && pnpm --filter @codentra/api build"
 
 [deploy]
-startCommand = "cd apps/api && pnpm exec prisma migrate deploy && node dist/main.js"
+startCommand = "sh apps/api/scripts/railway-start.sh"
 healthcheckPath = "/api/v1/health"
-healthcheckTimeout = 120
+healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
