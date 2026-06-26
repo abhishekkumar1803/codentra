@@ -7,16 +7,13 @@ import {
 import {
   ContestStatus,
   ContestType,
-  RatingType,
   SubmissionVerdict,
   type User,
 } from '@prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import { BusinessException } from '../../common/exceptions/business.exception';
-import {
-  getRatingTitle,
-  ratingDeltaForSolve,
-} from '../../common/utils/rating.util';
+import { SubmissionJudgeQueueService } from '../../infrastructure/queue/submission-judge.queue';
+import { JudgeService } from '../../infrastructure/judge/judge.service';
 import type {
   CreateProblemDto,
   CreateTestCaseDto,
@@ -24,10 +21,8 @@ import type {
   RunCodeDto,
   SubmitCodeDto,
 } from './dto/problem.dto';
-import { mockJudge } from './utils/mock-judge.util';
 import { DEFAULT_STARTER_CODE } from './utils/starter-code.util';
 import {
-  evaluateTestCases,
   sanitizeVerdictDetails,
   type VerdictDetails,
 } from './utils/verdict.util';
@@ -35,7 +30,11 @@ import { uniqueSlug } from '../contests/utils/slug.util';
 
 @Injectable()
 export class ProblemsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly judge: JudgeService,
+    private readonly submissionQueue: SubmissionJudgeQueueService,
+  ) {}
 
   async listProblems(contestSlug: string) {
     const contest = await this.getCodingContest(contestSlug);
@@ -139,22 +138,27 @@ export class ProblemsService {
         orderBy: { orderIndex: 'asc' },
       });
 
-      const results = samples.map((tc, i) => {
-        const result = mockJudge(
-          dto.sourceCode,
-          tc.input,
-          tc.output,
-          problem.timeLimitMs,
-        );
-        return {
-          index: i + 1,
-          input: tc.input,
-          verdict: result.verdict,
-          output: result.output,
-          expectedOutput: tc.output,
-          runtimeMs: result.runtimeMs,
-        };
-      });
+      const results = await Promise.all(
+        samples.map(async (tc, i) => {
+          const result = await this.judge.runTestCase({
+            sourceCode: dto.sourceCode,
+            language: dto.language,
+            input: tc.input,
+            expectedOutput: tc.output,
+            timeLimitMs: problem.timeLimitMs,
+            memoryMb: problem.memoryMb,
+          });
+          return {
+            index: i + 1,
+            input: tc.input,
+            verdict: result.verdict,
+            output: result.output,
+            expectedOutput: tc.output,
+            runtimeMs: result.runtimeMs,
+            message: result.message,
+          };
+        }),
+      );
 
       const allPassed = results.every((r) => r.verdict === SubmissionVerdict.ACCEPTED);
       return {
@@ -175,13 +179,15 @@ export class ProblemsService {
       where: { problemId: problem.id, input: dto.input },
     });
 
-    const expected = testCase?.output ?? this.inferExpectedOutput(dto.input);
-    const result = mockJudge(
-      dto.sourceCode,
-      dto.input,
-      expected,
-      problem.timeLimitMs,
-    );
+    const expected = testCase?.output ?? '';
+    const result = await this.judge.runTestCase({
+      sourceCode: dto.sourceCode,
+      language: dto.language,
+      input: dto.input,
+      expectedOutput: expected,
+      timeLimitMs: problem.timeLimitMs,
+      memoryMb: problem.memoryMb,
+    });
 
     return {
       mode: 'custom' as const,
@@ -190,6 +196,7 @@ export class ProblemsService {
       expectedOutput: expected,
       runtimeMs: result.runtimeMs,
       isSampleInput: testCase?.isSample ?? false,
+      message: result.message,
     };
   }
 
@@ -229,31 +236,6 @@ export class ProblemsService {
       throw new BadRequestException('NO_TEST_CASES');
     }
 
-    const evaluation = evaluateTestCases(
-      dto.sourceCode,
-      testCases,
-      mockJudge,
-      problem.timeLimitMs,
-    );
-
-    const existingAccepted = await this.prisma.codeSubmission.findFirst({
-      where: {
-        problemId: problem.id,
-        userId: user.id,
-        verdict: SubmissionVerdict.ACCEPTED,
-      },
-    });
-
-    const countsForScore =
-      contest.status === ContestStatus.LIVE && !registration.isVirtual;
-
-    const score =
-      countsForScore &&
-      evaluation.verdict === SubmissionVerdict.ACCEPTED &&
-      !existingAccepted
-        ? problem.points
-        : 0;
-
     const submission = await this.prisma.codeSubmission.create({
       data: {
         problemId: problem.id,
@@ -261,23 +243,12 @@ export class ProblemsService {
         userId: user.id,
         language: dto.language,
         sourceCode: dto.sourceCode,
-        verdict: evaluation.verdict,
-        score,
-        runtimeMs: evaluation.runtimeMs,
-        verdictDetails: evaluation.details ?? undefined,
+        verdict: SubmissionVerdict.PENDING,
+        score: 0,
       },
     });
 
-    if (score > 0) {
-      await this.prisma.contestParticipant.update({
-        where: {
-          contestId_userId: { contestId: contest.id, userId: user.id },
-        },
-        data: { score: { increment: score } },
-      });
-
-      await this.applyRatingGain(user.id, contest.type, problem.difficulty, contest.id);
-    }
+    await this.submissionQueue.enqueue(submission.id);
 
     return this.formatSubmission(submission);
   }
@@ -416,56 +387,6 @@ export class ProblemsService {
     return { message: 'Test case deleted.' };
   }
 
-  private async applyRatingGain(
-    userId: string,
-    contestType: ContestType,
-    difficulty: 'EASY' | 'MEDIUM' | 'HARD',
-    contestId: string,
-  ) {
-    const ratingType =
-      contestType === ContestType.COMPETITIVE_PROGRAMMING
-        ? RatingType.CP
-        : RatingType.DSA;
-
-    const profile = await this.prisma.profile.findUnique({ where: { userId } });
-    const current =
-      ratingType === RatingType.DSA
-        ? profile?.dsaRating ?? 1200
-        : profile?.cpRating ?? 1200;
-
-    const delta = ratingDeltaForSolve(
-      contestType === ContestType.COMPETITIVE_PROGRAMMING
-        ? 'COMPETITIVE_PROGRAMMING'
-        : 'DSA',
-      difficulty,
-    );
-    const next = current + delta;
-
-    await this.prisma.profile.upsert({
-      where: { userId },
-      create: {
-        userId,
-        dsaRating: ratingType === RatingType.DSA ? next : 1200,
-        cpRating: ratingType === RatingType.CP ? next : 1200,
-      },
-      update:
-        ratingType === RatingType.DSA
-          ? { dsaRating: next }
-          : { cpRating: next },
-    });
-
-    await this.prisma.ratingHistory.create({
-      data: {
-        userId,
-        type: ratingType,
-        rating: next,
-        delta,
-        contestId,
-        reason: 'Problem solved',
-      },
-    });
-  }
-
   private async getCodingContest(slug: string) {
     const contest = await this.prisma.contest.findFirst({
       where: {
@@ -508,14 +429,6 @@ export class ProblemsService {
     }
 
     return registration;
-  }
-
-  private inferExpectedOutput(input: string): string {
-    const parts = input.trim().split(/\s+/).map(Number);
-    if (parts.length >= 2 && !parts.some((n) => Number.isNaN(n))) {
-      return String(parts[0]! + parts[1]!);
-    }
-    return '';
   }
 
   private formatSubmission(

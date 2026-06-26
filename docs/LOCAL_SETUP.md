@@ -16,13 +16,22 @@ pnpm install
 cp apps/api/.env.example apps/api/.env
 cp apps/web/.env.example apps/web/.env.local
 
-# 3. Start PostgreSQL
+# 3. Start PostgreSQL + Redis
 docker compose up -d
 
-# 4. Database setup
+# 4. Start Judge0 CE (code execution sandbox)
+pnpm judge:up
+# Verify: curl http://localhost:2358/about
+
+# 5. Environment — ensure Judge0 URL is set (not hardcoded in code)
+# apps/api/.env:
+#   JUDGE_PROVIDER=judge0
+#   JUDGE0_API_URL=http://localhost:2358
+
+# 6. Database setup
 pnpm --filter @codentra/api db:push
 
-# 5. Start dev servers (cleans stale .next cache)
+# 7. Start dev servers (cleans stale .next cache)
 pnpm dev:clean
 ```
 
@@ -32,6 +41,8 @@ pnpm dev:clean
 |---------|-----|
 | Frontend | http://localhost:3000 |
 | API health | http://localhost:3001/api/v1/health |
+| Judge0 CE | http://localhost:2358 (`JUDGE0_API_URL`) |
+| Judge0 docs | http://localhost:2358/docs |
 
 ## Database
 
@@ -82,3 +93,46 @@ Copy missing vars from `apps/api/.env.example` into `apps/api/.env`.
 ## Razorpay dev mode
 
 Set `RAZORPAY_MOCK=true` in `apps/api/.env` to auto-activate subscriptions without Razorpay keys.
+
+## Judge0 CE (code execution)
+
+Codentra runs user code via **Judge0 CE**. The API URL is read from `JUDGE0_API_URL` only — never hardcoded.
+
+```bash
+pnpm judge:up      # start local Judge0 (infra/judge0)
+pnpm judge:down    # stop
+pnpm judge:logs    # tail server + worker logs
+```
+
+Required in `apps/api/.env`:
+
+```env
+JUDGE_PROVIDER=judge0
+JUDGE0_API_URL=http://localhost:2358
+```
+
+**Production:** set `JUDGE0_API_URL` to your production Judge0 host (e.g. `https://judge.codentra.com`). Optional `JUDGE0_API_KEY` if auth is enabled on that instance.
+
+### Judge0: `/box/main.cpp` error on macOS
+
+Judge0 responds but returns `Internal Error` / `rb_sysopen - /box/main.cpp`. This is a **Docker Desktop + cgroup** issue on Mac, not your code.
+
+1. Quit Docker Desktop
+2. Add `"DeprecatedCgroupv1": true` to `~/Library/Group Containers/group.com.docker/settings-store.json`
+3. Apple Silicon: enable **Rosetta** in Docker Desktop → Settings
+4. Restart Docker → `pnpm judge:down && pnpm judge:up`
+
+Details: [infra/judge0/README.md](../infra/judge0/README.md)
+
+### Judge0 not reachable
+
+```bash
+curl http://localhost:2358/about
+docker compose -f infra/judge0/docker-compose.yml ps
+```
+
+Judge0 needs `privileged: true` (Docker Desktop on Mac/Linux). First boot can take 30–60s after `pnpm judge:up`.
+
+**Docker Hub login required** — the Judge0 image is ~2GB. If `pnpm judge:up` fails with `unauthorized: authentication required`, run `docker login` (free Docker Hub account + PAT), then retry.
+
+Set `JUDGE_PROVIDER=mock` to skip Judge0 and use the in-process mock judge for UI-only work.

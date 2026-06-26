@@ -1,3 +1,5 @@
+'use client';
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { problemsApi } from '../api/problems-api';
 
@@ -32,6 +34,35 @@ export function useProblemSubmissions(
     queryFn: () => problemsApi.listSubmissions(contestSlug, problemSlug),
     enabled:
       (options?.enabled ?? true) && !!contestSlug && !!problemSlug,
+    refetchInterval: (query) => {
+      const hasPending = query.state.data?.items.some(
+        (s) => s.verdict === 'PENDING',
+      );
+      return hasPending ? 2000 : false;
+    },
+  });
+}
+
+export function useSubmission(
+  contestSlug: string,
+  problemSlug: string,
+  submissionId: string | null,
+) {
+  return useQuery({
+    queryKey: [
+      'problems',
+      contestSlug,
+      problemSlug,
+      'submission',
+      submissionId,
+    ],
+    queryFn: () =>
+      problemsApi.getSubmission(contestSlug, problemSlug, submissionId!),
+    enabled: !!contestSlug && !!problemSlug && !!submissionId,
+    refetchInterval: (query) => {
+      const verdict = query.state.data?.verdict;
+      return verdict === 'PENDING' ? 1500 : false;
+    },
   });
 }
 
@@ -51,14 +82,32 @@ export function useSubmitCode(contestSlug: string, problemSlug: string) {
   return useMutation({
     mutationFn: (body: { language: string; sourceCode: string }) =>
       problemsApi.submit(contestSlug, problemSlug, body),
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: ['problems', contestSlug, problemSlug, 'submissions'],
       });
-      queryClient.invalidateQueries({
-        queryKey: ['problems', contestSlug, problemSlug],
-      });
-      queryClient.invalidateQueries({ queryKey: ['contests', contestSlug] });
+      queryClient.setQueryData(
+        ['problems', contestSlug, problemSlug, 'submission', data.id],
+        data,
+      );
+      if (data.verdict === 'PENDING') {
+        queryClient.invalidateQueries({
+          queryKey: [
+            'problems',
+            contestSlug,
+            problemSlug,
+            'submission',
+            data.id,
+          ],
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: ['problems', contestSlug, problemSlug],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['contests', contestSlug],
+        });
+      }
     },
   });
 }

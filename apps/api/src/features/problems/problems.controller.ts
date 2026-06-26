@@ -1,14 +1,5 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Post,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import type { User } from '@prisma/client';
 import { RequireSubscription } from '../../common/decorators/require-subscription.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -72,6 +63,7 @@ export class ProblemsController {
 
   @Post(':problemSlug/run')
   @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 20, ttl: 60_000 } })
   runCode(
     @Param('contestSlug') contestSlug: string,
     @Param('problemSlug') problemSlug: string,
@@ -88,6 +80,7 @@ export class ProblemsController {
 
   @Post(':problemSlug/submit')
   @HttpCode(HttpStatus.CREATED)
+  @Throttle({ default: { limit: 6, ttl: 60_000 } })
   submitCode(
     @Param('contestSlug') contestSlug: string,
     @Param('problemSlug') problemSlug: string,

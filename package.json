@@ -18,6 +18,9 @@
     "db:push": "pnpm --filter @codentra/api db:push",
     "db:seed": "pnpm --filter @codentra/api db:seed",
     "db:generate": "pnpm --filter @codentra/api db:generate",
+    "judge:up": "docker compose -f infra/judge0/docker-compose.yml up -d db redis && echo 'Waiting for Judge0 DB/Redis...' && sleep 10 && docker compose -f infra/judge0/docker-compose.yml up -d server workers && echo 'Judge0 starting on http://localhost:2358 (first run may take several minutes to pull images)'",
+    "judge:down": "docker compose -f infra/judge0/docker-compose.yml down",
+    "judge:logs": "docker compose -f infra/judge0/docker-compose.yml logs -f server workers",
     "prepare": "husky"
   },
   "devDependencies": {

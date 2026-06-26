@@ -35,9 +35,73 @@ export type TestRunResult = {
   runtimeMs: number;
 };
 
+type TestCaseInput = { input: string; output: string; isSample: boolean };
+
+export async function evaluateTestCasesAsync(
+  testCases: TestCaseInput[],
+  runCase: (tc: TestCaseInput) => Promise<TestRunResult>,
+): Promise<{
+  verdict: SubmissionVerdict;
+  runtimeMs: number;
+  details: VerdictDetails | null;
+}> {
+  let totalRuntime = 0;
+  let pretestIndex = 0;
+
+  for (let i = 0; i < testCases.length; i++) {
+    const tc = testCases[i]!;
+    if (tc.isSample) {
+      pretestIndex += 1;
+    }
+
+    const result = await runCase(tc);
+    totalRuntime += result.runtimeMs;
+
+    if (result.verdict !== SubmissionVerdict.ACCEPTED) {
+      const isHidden = !tc.isSample;
+      const failedPretest = tc.isSample ? pretestIndex : undefined;
+      const verdictMessage = buildFailureMessage(
+        result.verdict,
+        isHidden,
+        failedPretest,
+      );
+
+      const details: VerdictDetails = {
+        failedTestIndex: failedPretest,
+        isHidden,
+        passedCount: i,
+        totalCount: testCases.length,
+        message: verdictMessage,
+      };
+
+      if (!isHidden) {
+        details.input = tc.input;
+        details.expectedOutput = tc.output;
+        details.actualOutput = result.output;
+      }
+
+      return {
+        verdict: result.verdict,
+        runtimeMs: totalRuntime,
+        details,
+      };
+    }
+  }
+
+  return {
+    verdict: SubmissionVerdict.ACCEPTED,
+    runtimeMs: totalRuntime,
+    details: {
+      passedCount: testCases.length,
+      totalCount: testCases.length,
+      message: 'Accepted — all pretests and hidden tests passed.',
+    },
+  };
+}
+
 export function evaluateTestCases(
   sourceCode: string,
-  testCases: { input: string; output: string; isSample: boolean }[],
+  testCases: TestCaseInput[],
   mockJudge: (
     code: string,
     input: string,
@@ -101,6 +165,15 @@ export function evaluateTestCases(
       totalCount: testCases.length,
       message: 'Accepted — all pretests and hidden tests passed.',
     },
+  };
+}
+
+/** Map judge run result to TestRunResult shape. */
+export function toTestRunResult(result: TestRunResult): TestRunResult {
+  return {
+    verdict: result.verdict,
+    output: result.output,
+    runtimeMs: result.runtimeMs,
   };
 }
 

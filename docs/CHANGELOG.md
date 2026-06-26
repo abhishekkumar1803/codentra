@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **UX feedback round 2** — Service booking modal (form + payment), dedicated `/quizzes` section, LeetCode-style pretest/hidden judging with TLE, landing hero subtitle contrast fix, leaderboards simplified to Global + By contest, profile contest activity graph, referrals express-interest flow with company filters.
+- **LeetCode-style contest judge** — Monaco editor, Judge0 CE (env-based `JUDGE0_API_URL`), local Docker stack at `infra/judge0`, BullMQ async submissions.
 - **Feedback polish** — Animated landing (scrolling code hero, scroll-reveal), auth session fix for navbar, contest leaderboard filter, Codentra rating tiers + history graphs on profile, problem solver improvements (starter-only code, hidden test cases, verdict details), admin problem/test-case manager for DSA/CP contests.
 - **Screenshot parity rebuild** — FAQ (/faq), pricing (/pricing), auth-aware marketing navbar/hero/CTA, full dashboard sidebar (Quizzes, Services, Mentor, Employer, Back to site).
 - **Dashboard ratings** — DSA/CP ratings on profile, global rank on overview, quick links card.

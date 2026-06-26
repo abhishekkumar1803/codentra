@@ -421,6 +421,7 @@ export type RunCodeResult =
       expectedOutput: string;
       runtimeMs: number;
       isSampleInput: boolean;
+      message?: string;
     }
   | {
       mode: 'samples';
@@ -432,6 +433,7 @@ export type RunCodeResult =
         output: string;
         expectedOutput: string;
         runtimeMs: number;
+        message?: string;
       }>;
     };
 

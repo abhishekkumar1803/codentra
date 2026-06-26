@@ -1,9 +1,11 @@
-const PYTHON_STARTER = `# Write your solution below
-import sys
+const PYTHON_STARTER = `import sys
 
 def solve():
-    # Read input from stdin and print the answer
-    pass
+    data = sys.stdin.read().strip().split()
+    if len(data) < 2:
+        return
+    a, b = int(data[0]), int(data[1])
+    print(a + b)
 
 if __name__ == "__main__":
     solve()
@@ -13,7 +15,12 @@ const CPP_STARTER = `#include <iostream>
 using namespace std;
 
 int main() {
-    // Read input and print the answer
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    long long a, b;
+    if (cin >> a >> b) {
+        cout << a + b << "\\n";
+    }
     return 0;
 }
 `;
@@ -26,14 +33,22 @@ export const DEFAULT_STARTER_CODE = {
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        // Read input and print the answer
+        if (sc.hasNextLong()) {
+            long a = sc.nextLong();
+            long b = sc.hasNextLong() ? sc.nextLong() : 0;
+            System.out.println(a + b);
+        }
     }
 }
 `,
   JAVASCRIPT: `const fs = require('fs');
 
 function solve() {
-  // Read input and print the answer
+  const input = fs.readFileSync(0, 'utf8').trim();
+  const parts = input.split(/\\s+/).map(Number);
+  if (parts.length >= 2) {
+    console.log(parts[0] + parts[1]);
+  }
 }
 
 solve();

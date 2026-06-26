@@ -66,6 +66,8 @@ Our mission is to build a complete ecosystem where developers can learn, compete
 * Google OAuth
 * Cloudinary
 * Resend
+* Judge0 CE (code execution)
+* BullMQ + Redis (async submissions)
 
 ---
 
@@ -103,11 +105,43 @@ codentra/
 ## 🏁 Local Development
 
 ```bash
+docker compose up -d          # Codentra Postgres + Redis (required for submit queue)
 pnpm install
-pnpm db:push      # sync schema to Postgres
-pnpm db:seed      # admin@codentra.dev / Admin123! + demo user + sample contests
-pnpm dev:clean    # start API (3001) + web (3000)
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env.local
+pnpm judge:up                 # Judge0 CE at http://localhost:2358
+pnpm db:push                  # sync schema to Postgres
+pnpm db:seed                  # admin@codentra.dev / Admin123! + demo user + sample contests
+pnpm dev:clean                # start API (3001) + web (3000)
 ```
+
+### Contest code execution (LeetCode-style)
+
+| Layer | Technology |
+|-------|------------|
+| Editor | Monaco (`@monaco-editor/react`) |
+| Run (sync) | Judge0 CE API |
+| Submit (async) | BullMQ → worker → Judge0 CE |
+| Storage | PostgreSQL (`code_submissions`, leaderboards) |
+
+**Local Judge0 CE** (Docker, port `2358`):
+
+```bash
+pnpm judge:up    # starts infra/judge0 (server + workers + db + redis)
+```
+
+**API env** (`apps/api/.env`) — URL comes from env only:
+
+```env
+JUDGE_PROVIDER=judge0
+JUDGE0_API_URL=http://localhost:2358
+JUDGE0_API_KEY=              # optional for local; set in production if Judge0 auth is enabled
+REDIS_URL=redis://localhost:6379
+```
+
+**Production:** change `JUDGE0_API_URL` to your hosted Judge0 endpoint (same code, no changes).
+
+Without Redis, submits are judged synchronously in the API process. Set `JUDGE_PROVIDER=mock` to use the dev mock judge (no Docker Judge0).
 
 See [docs/LOCAL_SETUP.md](docs/LOCAL_SETUP.md) for full setup.
 

@@ -1,0 +1,79 @@
+# Judge0 CE — local code execution sandbox
+# API: http://localhost:2358  (set JUDGE0_API_URL in apps/api/.env)
+#
+# Start:  pnpm judge:up
+# Stop:   pnpm judge:down
+# Docs:   http://localhost:2358/docs
+
+x-logging: &default-logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100M
+
+services:
+  db:
+    image: postgres:16.2-alpine
+    container_name: codentra-judge0-db
+    env_file: judge0.conf
+    environment:
+      POSTGRES_DB: judge0
+      POSTGRES_USER: judge0
+      POSTGRES_PASSWORD: judge0_postgres_dev
+    volumes:
+      - judge0_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U judge0 -d judge0']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    <<: *default-logging
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: codentra-judge0-redis
+    command: ['redis-server', '--appendonly', 'no', '--requirepass', 'judge0_redis_dev']
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-a', 'judge0_redis_dev', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    <<: *default-logging
+    restart: unless-stopped
+
+  server:
+    image: judge0/judge0:1.13.1
+    container_name: codentra-judge0-server
+    volumes:
+      - ./judge0.conf:/judge0.conf:ro
+    ports:
+      - '2358:2358'
+    privileged: true
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    <<: *default-logging
+    restart: unless-stopped
+
+  workers:
+    image: judge0/judge0:1.13.1
+    container_name: codentra-judge0-workers
+    command: ['./scripts/workers']
+    volumes:
+      - ./judge0.conf:/judge0.conf:ro
+    privileged: true
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      server:
+        condition: service_started
+    <<: *default-logging
+    restart: unless-stopped
+
+volumes:
+  judge0_pg_data:
