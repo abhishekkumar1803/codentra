@@ -1,11 +1,11 @@
 # Codentra API — Railway staging/production deploy
 # Web (@codentra/web) should deploy on Vercel, not Railway.
+# Start command comes from Dockerfile CMD (WORKDIR /app/apps/api).
 
 [build]
 buildCommand = "pnpm install --frozen-lockfile && pnpm --filter @codentra/api build"
 
 [deploy]
-startCommand = "sh apps/api/scripts/railway-start.sh"
 healthcheckPath = "/api/v1/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
