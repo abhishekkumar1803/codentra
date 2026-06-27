@@ -97,6 +97,6 @@ Only `db` and `redis` running means `server`/`workers` did not start — check `
 
 ## Notes
 
-- Images: `judge0/judge0:1.13.1`
+- Images: `mrkushalsm/judge0:latest` (cgroup v1 + v2; official `judge0/judge0:1.13.1` fails on cgroup v2 hosts)
 - `privileged: true` is required for the isolate sandbox
 - Dev passwords in `judge0.conf` are for local use only — rotate for staging/production

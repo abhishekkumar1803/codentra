@@ -13,7 +13,12 @@ BASE_URL="${BASE_URL%/}"
 
 echo "==> Judge0 smoke test: $BASE_URL"
 
-if ! curl -sf "$BASE_URL/about" >/dev/null; then
+ABOUT_HEADERS=""
+if [ -n "$TOKEN" ]; then
+  ABOUT_HEADERS="-H X-Auth-Token: $TOKEN"
+fi
+
+if ! curl -sf $ABOUT_HEADERS "$BASE_URL/about" >/dev/null; then
   echo "FAIL: $BASE_URL/about unreachable"
   exit 1
 fi
@@ -36,8 +41,8 @@ if echo "$RESPONSE" | grep -qE '"description"[[:space:]]*:[[:space:]]*"Accepted"
 fi
 
 if echo "$RESPONSE" | grep -q '"id": 13'; then
-  echo "FAIL: Internal Error (status 13) — workers cannot create isolate sandbox."
-  echo "      Ensure Linux VM with privileged Docker. See infra/judge0/README.md"
+  echo "FAIL: Internal Error (status 13) — isolate sandbox failed (usually Docker cgroup v2)."
+  echo "      Fix: use mrkushalsm/judge0:latest in docker-compose.yml — see docs/JUDGE0_STAGING_SETUP.md"
   exit 1
 fi
 

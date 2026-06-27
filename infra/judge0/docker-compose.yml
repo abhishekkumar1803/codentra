@@ -57,7 +57,10 @@ services:
     restart: unless-stopped
 
   server:
-    image: judge0/judge0:1.13.1
+    # Official judge0/judge0:1.13.1 needs cgroup v1; modern Docker (incl. Ubuntu 22.04)
+    # defaults to cgroup v2 → status 13 "/box/script.py". mrkushalsm/judge0 supports both.
+    # See docs/JUDGE0_STAGING_SETUP.md and https://github.com/judge0/judge0/issues/543
+    image: mrkushalsm/judge0:latest
     container_name: codentra-judge0-server
     volumes:
       - ./judge0.conf:/judge0.conf:ro
@@ -73,7 +76,7 @@ services:
     restart: unless-stopped
 
   workers:
-    image: judge0/judge0:1.13.1
+    image: mrkushalsm/judge0:latest
     container_name: codentra-judge0-workers
     command: ['./scripts/workers']
     volumes:

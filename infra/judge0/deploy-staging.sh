@@ -89,6 +89,15 @@ fi
 export POSTGRES_PASSWORD="${POSTGRES_PASSWORD:?}"
 export REDIS_PASSWORD="${REDIS_PASSWORD:?}"
 
+# Docker Compose reads .env for ${REDIS_PASSWORD} in redis service command
+cat > .env <<EOF
+REDIS_PASSWORD=${REDIS_PASSWORD}
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+POSTGRES_DB=${POSTGRES_DB:-judge0}
+POSTGRES_USER=${POSTGRES_USER:-judge0}
+EOF
+chmod 600 .env
+
 echo "==> Pulling Docker images (first run may take 10–15 min)..."
 if ! docker compose pull; then
   echo ""
@@ -104,7 +113,7 @@ echo "==> Waiting for Judge0 API..."
 ok=0
 i=0
 while [ "$i" -lt 90 ]; do
-  if curl -sf "http://127.0.0.1:2358/about" >/dev/null 2>&1; then
+  if curl -sf -H "X-Auth-Token: $AUTHN_TOKEN" "http://127.0.0.1:2358/about" >/dev/null 2>&1; then
     ok=1
     break
   fi

@@ -43,7 +43,7 @@ Judge0 VM (YOUR_IP:2358)
 
 ## Step 1 — Create a Linux VM
 
-**Ubuntu 22.04 or 24.04 LTS.** Minimum: **2 vCPU, 4 GB RAM, 40 GB disk**.
+**Ubuntu 22.04 LTS strongly recommended.** Judge0 1.13.1 does **not** work on Ubuntu 24.04 out of the box (cgroup v2 → status 13 `/box/script.py`). Minimum: **2 vCPU, 4 GB RAM, 40 GB disk**.
 
 ### Option A — Oracle Cloud Always Free ($0)
 
@@ -58,7 +58,7 @@ Judge0 VM (YOUR_IP:2358)
 ### Option B — Hetzner (~€4/mo, recommended if Oracle capacity fails)
 
 1. [console.hetzner.cloud](https://console.hetzner.cloud) → **CX22** (2 vCPU, 4 GB)
-2. Ubuntu 24.04, SSH key → note **IPv4**
+2. **Ubuntu 22.04** (not 24.04), SSH key → note **IPv4**
 3. SSH: `ssh root@YOUR_VM_IP`
 
 ---
@@ -167,10 +167,83 @@ sh infra/judge0/smoke-test.sh http://YOUR_VM_IP:2358 YOUR_AUTHN_TOKEN
 | Symptom | Fix |
 | ------- | --- |
 | Only db + redis running | `docker compose logs server workers` — need Linux + `privileged: true` |
-| Smoke test status 13 | Workers can't create isolate — must be **Linux VM**, not Mac |
+| Smoke test status 13 `/box/script.py` | **Docker cgroup v2** — see fix below (Ubuntu 22.04 alone is not enough with Docker 29+) |
 | Railway "Judge0 unreachable" | Open cloud firewall on **2358**; check public IP in `JUDGE0_API_URL` |
 | Railway still uses mock | Set `JUDGE_PROVIDER=judge0` and non-empty `JUDGE0_API_URL`; redeploy |
-| Key mismatch | `JUDGE0_API_KEY` must exactly match `AUTHN_TOKEN` |
+| Redis WRONGPASS on submit | Recreate stack with passwords loaded — see below |
+
+### Redis WRONGPASS (500 on submission)
+
+Redis was started with a default password, but Judge0 reads `REDIS_PASSWORD` from `judge0.conf`. Fix:
+
+```bash
+cd /opt/codentra/infra/judge0
+set -a && . ./judge0.conf && set +a
+cat > .env <<EOF
+REDIS_PASSWORD=${REDIS_PASSWORD}
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+POSTGRES_DB=${POSTGRES_DB:-judge0}
+POSTGRES_USER=${POSTGRES_USER:-judge0}
+EOF
+docker compose down
+docker compose up -d --force-recreate
+sleep 30
+TOKEN=$(grep '^AUTHN_TOKEN=' judge0.conf | cut -d= -f2-)
+curl -s -X POST "http://127.0.0.1:2358/submissions?wait=true&base64_encoded=false" \
+  -H "Content-Type: application/json" \
+  -H "X-Auth-Token: $TOKEN" \
+  -d '{"source_code":"print(1+2)","language_id":71,"stdin":"","expected_output":"3\n"}'
+```
+
+### Status 13 (`/box/script.py`) — cgroup v2 sandbox failure
+
+Official `judge0/judge0:1.13.1` uses **isolate + cgroup v1**. Modern Docker (including on **Ubuntu 22.04** after `get.docker.com`) uses **cgroup v2**, so the sandbox never creates `/box/` → status 13.
+
+**Confirm on the VM:**
+
+```bash
+docker info | grep -i cgroup          # often "Cgroup Version: 2"
+mount | grep cgroup                   # v2: unified mount; v1: separate memory/cpu mounts
+docker compose logs workers --tail 30 # may show cgroup/memory path errors
+```
+
+**Option A — Use cgroup-v2-compatible image (recommended, no reboot):**
+
+Our `docker-compose.yml` uses `mrkushalsm/judge0:latest` (supports cgroup v1 and v2). On an existing VM:
+
+```bash
+cd /opt/codentra/infra/judge0
+git pull   # or manually edit docker-compose.yml — see repo
+set -a && . ./judge0.conf && set +a
+cat > .env <<EOF
+REDIS_PASSWORD=${REDIS_PASSWORD}
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+POSTGRES_DB=${POSTGRES_DB:-judge0}
+POSTGRES_USER=${POSTGRES_USER:-judge0}
+EOF
+docker compose down
+docker compose pull
+docker compose up -d --force-recreate
+sleep 30
+./smoke-test.sh "http://127.0.0.1:2358" "$(grep '^AUTHN_TOKEN=' judge0.conf | cut -d= -f2-)"
+```
+
+**Quick manual fix without git pull:**
+
+```bash
+cd /opt/codentra/infra/judge0
+sed -i 's|judge0/judge0:1.13.1|mrkushalsm/judge0:latest|g' docker-compose.yml
+# then same docker compose down / pull / up steps as above
+```
+
+**Option B — Force cgroup v1 on the host (GRUB + reboot):**
+
+```bash
+sudo sed -i 's/^GRUB_CMDLINE_LINUX="/GRUB_CMDLINE_LINUX="systemd.unified_cgroup_hierarchy=0 cgroup_enable=memory swapaccount=1 /' /etc/default/grub
+sudo update-grub && sudo reboot
+```
+
+After reboot, `docker info | grep -i cgroup` should show version 1. You can then use official `judge0/judge0:1.13.1` if preferred.
 
 ---
 
@@ -198,7 +271,7 @@ sh infra/judge0/smoke-test.sh http://YOUR_VM_IP:2358 YOUR_AUTHN_TOKEN
 ## Checklist
 
 ```
-[ ] Linux VM created (Ubuntu 24.04, 2+ vCPU, 4+ GB)
+[ ] Linux VM created (**Ubuntu 22.04**, 2+ vCPU, 4+ GB)
 [ ] ./deploy-staging.sh succeeded
 [ ] smoke-test.sh returns Accepted
 [ ] Firewall: 2358 open (VM + cloud)
