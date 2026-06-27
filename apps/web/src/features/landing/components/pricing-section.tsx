@@ -8,7 +8,7 @@ export function PricingSection() {
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Simple, transparent pricing hhh
+            Simple, transparent pricing
           </h2>
           <p className="mt-4 text-muted-foreground">
             One membership. Full access. Premium services available à la carte.
