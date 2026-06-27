@@ -1,6 +1,6 @@
 # Codentra — Task Tracker
 
-**Last Updated:** 2026-06-25 (Feedback polish before next phase)
+**Last Updated:** 2026-06-27 (Staging Judge0 setup)
 
 ---
 
@@ -222,11 +222,26 @@
 
 ---
 
+## Staging Environment (prod mirror)
+
+| ID     | Task                                      | Status      | Notes                                              |
+| ------ | ----------------------------------------- | ----------- | -------------------------------------------------- |
+| STG-01 | Neon staging DB + migrate deploy          | in_progress | Railway `railway-start.sh` runs migrations       |
+| STG-02 | Railway API deploy                        | in_progress | Dockerfile + `railway.toml`                        |
+| STG-03 | Vercel web (`codentra-web.vercel.app`)    | in_progress | `NEXT_PUBLIC_API_URL` → Railway                    |
+| STG-04 | Upstash Redis on Railway                  | in_progress | Async submission queue                             |
+| STG-05 | Judge0 VM + Railway env vars              | in_progress | See `docs/JUDGE0_STAGING_SETUP.md`                 |
+| STG-06 | One-time `db:seed` on staging Neon        | pending     | Never run in production                            |
+| STG-07 | Razorpay test mode (replace mock)         | pending     | Webhook to Railway URL                             |
+| STG-08 | CI deploy-staging + smoke tests           | pending     | `.github/workflows/deploy-staging.yml`             |
+
+---
+
 ## Current Sprint
 
-**Sprint:** UX feedback round 2 ✅  
-**Goal:** Services booking modal, separate quizzes, CP-style judging, hero contrast, leaderboard simplification, profile contest graph, actionable referrals  
-**Blockers:** None
+**Sprint:** Staging prod mirror — Judge0  
+**Goal:** Deploy Judge0 on Linux VM, connect Railway API, verify end-to-end contest Run/Submit  
+**Blockers:** Judge0 requires Linux VM (cannot run on Railway/Vercel)
 
 ### Feedback round 2 (completed)
 

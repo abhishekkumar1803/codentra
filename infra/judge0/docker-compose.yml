@@ -19,7 +19,7 @@ services:
     environment:
       POSTGRES_DB: judge0
       POSTGRES_USER: judge0
-      POSTGRES_PASSWORD: judge0_postgres_dev
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-judge0_postgres_dev}
     volumes:
       - judge0_pg_data:/var/lib/postgresql/data
     healthcheck:
@@ -33,9 +33,23 @@ services:
   redis:
     image: redis:7.2-alpine
     container_name: codentra-judge0-redis
-    command: ['redis-server', '--appendonly', 'no', '--requirepass', 'judge0_redis_dev']
+    command:
+      [
+        'redis-server',
+        '--appendonly',
+        'no',
+        '--requirepass',
+        '${REDIS_PASSWORD:-judge0_redis_dev}',
+      ]
     healthcheck:
-      test: ['CMD', 'redis-cli', '-a', 'judge0_redis_dev', 'ping']
+      test:
+        [
+          'CMD',
+          'redis-cli',
+          '-a',
+          '${REDIS_PASSWORD:-judge0_redis_dev}',
+          'ping',
+        ]
       interval: 5s
       timeout: 5s
       retries: 10

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Judge0 staging deploy** — `infra/judge0/deploy-staging.sh`, `smoke-test.sh`, `judge0.staging.conf.example`, and `docs/JUDGE0_STAGING_SETUP.md` (Oracle free + Hetzner VM, Railway env wiring).
 - **LeetCode-style contest judge** — Monaco editor, Judge0 CE (env-based `JUDGE0_API_URL`), local Docker stack at `infra/judge0`, BullMQ async submissions.
 - **Feedback polish** — Animated landing (scrolling code hero, scroll-reveal), auth session fix for navbar, contest leaderboard filter, Codentra rating tiers + history graphs on profile, problem solver improvements (starter-only code, hidden test cases, verdict details), admin problem/test-case manager for DSA/CP contests.
 - **Screenshot parity rebuild** — FAQ (/faq), pricing (/pricing), auth-aware marketing navbar/hero/CTA, full dashboard sidebar (Quizzes, Services, Mentor, Employer, Back to site).
