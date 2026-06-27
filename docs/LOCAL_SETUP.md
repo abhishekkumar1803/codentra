@@ -94,6 +94,8 @@ Copy missing vars from `apps/api/.env.example` into `apps/api/.env`.
 
 Set `RAZORPAY_MOCK=true` in `apps/api/.env` to auto-activate subscriptions without Razorpay keys.
 
+**Staging / production:** full step-by-step guide → [RAZORPAY_STAGING_SETUP.md](./RAZORPAY_STAGING_SETUP.md)
+
 ## Judge0 CE (code execution)
 
 Codentra runs user code via **Judge0 CE**. The API URL is read from `JUDGE0_API_URL` only — never hardcoded.

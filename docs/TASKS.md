@@ -232,16 +232,16 @@
 | STG-04 | Upstash Redis on Railway                  | in_progress | Async submission queue                             |
 | STG-05 | Judge0 VM + Railway env vars              | in_progress | See `docs/JUDGE0_STAGING_SETUP.md`                 |
 | STG-06 | One-time `db:seed` on staging Neon        | pending     | Never run in production                            |
-| STG-07 | Razorpay test mode (replace mock)         | pending     | Webhook to Railway URL                             |
+| STG-07 | Razorpay test mode (replace mock)         | in_progress | See `docs/RAZORPAY_STAGING_SETUP.md`               |
 | STG-08 | CI deploy-staging + smoke tests           | pending     | `.github/workflows/deploy-staging.yml`             |
 
 ---
 
 ## Current Sprint
 
-**Sprint:** Staging prod mirror — Judge0  
-**Goal:** Deploy Judge0 on Linux VM, connect Railway API, verify end-to-end contest Run/Submit  
-**Blockers:** Judge0 requires Linux VM (cannot run on Railway/Vercel)
+**Sprint:** Staging prod mirror — Payments (Razorpay test mode)  
+**Goal:** Wire Razorpay test keys + webhook on Railway; verify /subscribe checkout on Vercel  
+**Blockers:** None — code is built; needs Razorpay dashboard + env vars
 
 ### Feedback round 2 (completed)
 

@@ -2,7 +2,7 @@
 
 Codentra executes contest code through [Judge0 CE](https://github.com/judge0/judge0). This folder runs a **self-hosted** instance for development and staging.
 
-**Full staging guide:** [docs/JUDGE0_STAGING_SETUP.md](../docs/JUDGE0_STAGING_SETUP.md)
+**Full staging guides:** [Judge0](../docs/JUDGE0_STAGING_SETUP.md) · [Razorpay](../docs/RAZORPAY_STAGING_SETUP.md)
 
 ## Quick start (local)
 
