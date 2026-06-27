@@ -1,4 +1,9 @@
-import type { UserProfile, UserStats } from '@codentra/types';
+import type {
+  ContestHistoryEntry,
+  RatingHistoryEntry,
+  UserProfile,
+  UserStats,
+} from '@codentra/types';
 import { api, getAccessToken } from '@/shared/lib/api-client';
 
 export const usersApi = {
@@ -6,14 +11,12 @@ export const usersApi = {
   getProfile: () => api.get<UserProfile>('/users/me'),
   getRatingHistory: (type?: string) => {
     const qs = type ? `?type=${type}` : '';
-    return api.get<{ items: import('@codentra/types').RatingHistoryEntry[] }>(
+    return api.get<{ items: RatingHistoryEntry[] }>(
       `/users/me/rating-history${qs}`,
     );
   },
   getContestHistory: () =>
-    api.get<{ items: import('@codentra/types').ContestHistoryEntry[] }>(
-      '/users/me/contest-history',
-    ),
+    api.get<{ items: ContestHistoryEntry[] }>('/users/me/contest-history'),
   updateProfile: (data: Partial<UserProfile>) =>
     api.patch<UserProfile>('/users/me', data),
   changePassword: (currentPassword: string, newPassword: string) =>

@@ -4,6 +4,6 @@ import nextConfig from '@codentra/config/eslint/next';
 export default [
   ...nextConfig,
   {
-    ignores: ['.next/**', 'next-env.d.ts'],
+    ignores: ['.next/**', 'next-env.d.ts', '**/*.spec.ts', '**/*.test.ts'],
   },
 ];
