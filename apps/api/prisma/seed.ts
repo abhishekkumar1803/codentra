@@ -203,7 +203,8 @@ async function main() {
     create: {
       title: 'ICPC Practice Round #1',
       slug: 'icpc-practice-round-1',
-      description: 'Competitive programming warm-up before the real contest season.',
+      description:
+        'Competitive programming warm-up before the real contest season.',
       type: ContestType.COMPETITIVE_PROGRAMMING,
       status: ContestStatus.SCHEDULED,
       startTime: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
@@ -312,7 +313,9 @@ async function main() {
   }
 
   console.log('Seed complete.');
-  console.log('  Contests: 10 DSA + 10 CP (4 ended, 6 live each) with 2–3 problems');
+  console.log(
+    '  Contests: 10 DSA + 10 CP (4 ended, 6 live each) with 2–3 problems',
+  );
   console.log('  Quizzes: Java, React, JavaScript, DevOps (10 questions each)');
   console.log(`  Admin: ${ADMIN_EMAIL} / ${SEED_PASSWORD}`);
   console.log(`  Demo:  ${DEMO_EMAIL} / ${SEED_PASSWORD}`);

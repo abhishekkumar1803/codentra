@@ -15,12 +15,12 @@ However, the design has a **Phase 1 vs. full-schema mismatch**, several **auth/p
 
 **Overall verdict:** Approve with modifications. Address P0 items before Phase 1 implementation; defer or simplify over-engineered pieces.
 
-| Severity | Count | Action |
-|----------|-------|--------|
-| P0 — Block implementation | 8 | Fix before coding |
-| P1 — Fix in Phase 1 | 12 | Fix during Phase 1 |
-| P2 — Address before scale | 15 | Track in backlog |
-| P3 — Nice to have | 10 | Defer |
+| Severity                  | Count | Action             |
+| ------------------------- | ----- | ------------------ |
+| P0 — Block implementation | 8     | Fix before coding  |
+| P1 — Fix in Phase 1       | 12    | Fix during Phase 1 |
+| P2 — Address before scale | 15    | Track in backlog   |
+| P3 — Nice to have         | 10    | Defer              |
 
 ---
 
@@ -136,6 +136,7 @@ Gaps between PRD promises and architectural support.
 **Impact:** Phase 2 cannot start without a major schema addition. CP "rating system" has no data model.
 
 **Recommendation:** Add to `DATABASE.md` before Phase 2:
+
 - `problems` (title, difficulty, type, time_limit, memory_limit)
 - `contest_problems` (contest_id, problem_id, points, order)
 - `submissions` (user_id, problem_id, contest_id, code, language, status, score)
@@ -201,6 +202,7 @@ Gaps between PRD promises and architectural support.
 **Impact:** Users cancelled mid-period may lose access immediately; PAST_DUE users may retain access indefinitely.
 
 **Recommendation:** Document and implement:
+
 - `ACTIVE` → full access
 - `CANCELLED` → access until `current_period_end`
 - `PAST_DUE` → 3-day grace, then restrict
@@ -235,6 +237,7 @@ Update `SubscriptionGuard` accordingly.
 ### 2.9 Legal & Compliance
 
 **Missing:**
+
 - Terms of Service / Privacy Policy acceptance at registration
 - Account deletion (GDPR/DPDPA right to erasure)
 - Data export
@@ -248,6 +251,7 @@ Update `SubscriptionGuard` accordingly.
 ### 2.10 Operational Requirements
 
 **Missing:**
+
 - Error monitoring (Sentry)
 - Uptime monitoring
 - Database backup/restore runbook
@@ -411,6 +415,7 @@ Update `SubscriptionGuard` accordingly.
 **Impact:** Middleware-based route protection will not work. Server Components cannot access in-memory token.
 
 **Recommendation:** Choose one strategy:
+
 - **Option A (recommended):** Access token in httpOnly cookie (same-site), no JS access. Middleware works. Simpler.
 - **Option B:** Access token in memory, all protected pages are client components, middleware only checks refresh cookie existence.
 
@@ -584,12 +589,12 @@ Document cookie attributes: `Secure`, `HttpOnly`, `SameSite=Lax`, `Path=/`, `Dom
 
 ### 5.5 Missing Indexes
 
-| Table | Missing Index | Query |
-|-------|--------------|-------|
-| `subscriptions` | `(status, current_period_end)` | Cron: expire subscriptions |
-| `payments` | `(user_id, created_at DESC)` | Payment history |
-| `users` | `(is_active) WHERE deleted_at IS NULL` | Admin active users |
-| `contest_participants` | `(user_id, created_at DESC)` | User contest history |
+| Table                  | Missing Index                          | Query                      |
+| ---------------------- | -------------------------------------- | -------------------------- |
+| `subscriptions`        | `(status, current_period_end)`         | Cron: expire subscriptions |
+| `payments`             | `(user_id, created_at DESC)`           | Payment history            |
+| `users`                | `(is_active) WHERE deleted_at IS NULL` | Admin active users         |
+| `contest_participants` | `(user_id, created_at DESC)`           | User contest history       |
 
 **Severity:** P2
 
@@ -702,6 +707,7 @@ Document cookie attributes: `Secure`, `HttpOnly`, `SameSite=Lax`, `Path=/`, `Dom
 **Impact:** Race conditions, duplicate payment records, inconsistent state if one fails.
 
 **Recommendation:**
+
 ```
 Client checkout success → poll GET /subscriptions/me
 Webhook subscription.activated → create/update subscription + payment (AUTHORITATIVE)
@@ -789,14 +795,14 @@ Remove or deprecate client verify endpoint
 
 ### 8.1 Infrastructure Stack Cost (Early Stage)
 
-| Service | Est. Monthly Cost (2k users) | Optimization |
-|---------|------------------------------|--------------|
-| Neon PostgreSQL | $19–50 | Use free tier for dev; scale plan only when needed |
-| Railway (API) | $5–20 | Start with 1 small instance; no auto-scale until traffic warrants |
-| Vercel | $0–20 | Hobby plan sufficient for Phase 1 |
-| Cloudinary | $0–25 | **Defer to Phase 5 for avatars** — use Next.js `Image` + Vercel Blob or upload to R2 |
-| Resend | $0–20 | Free tier: 3k emails/month — sufficient early |
-| Razorpay | 2% per transaction | Pass-through; no optimization |
+| Service         | Est. Monthly Cost (2k users) | Optimization                                                                         |
+| --------------- | ---------------------------- | ------------------------------------------------------------------------------------ |
+| Neon PostgreSQL | $19–50                       | Use free tier for dev; scale plan only when needed                                   |
+| Railway (API)   | $5–20                        | Start with 1 small instance; no auto-scale until traffic warrants                    |
+| Vercel          | $0–20                        | Hobby plan sufficient for Phase 1                                                    |
+| Cloudinary      | $0–25                        | **Defer to Phase 5 for avatars** — use Next.js `Image` + Vercel Blob or upload to R2 |
+| Resend          | $0–20                        | Free tier: 3k emails/month — sufficient early                                        |
+| Razorpay        | 2% per transaction           | Pass-through; no optimization                                                        |
 
 **Estimated Phase 1 infra:** $0–30/month (within free tiers).
 
@@ -884,46 +890,46 @@ Remove or deprecate client verify endpoint
 
 ### P0 — Must Fix in Documentation Before Coding
 
-| # | Action | Owner |
-|---|--------|-------|
-| 1 | Remove `POST /subscriptions/verify` as client-trusted endpoint; webhook as sole activator | API + Backend docs |
-| 2 | Fix subscription creation flow: PENDING until webhook confirms | Backend + DB docs |
-| 3 | Document cross-domain cookie strategy (Domain, SameSite, Secure) | Frontend + Backend docs |
-| 4 | Add `webhook_events` table for idempotency | DATABASE.md + schema |
-| 5 | Add `password_reset_tokens` table | DATABASE.md + schema |
-| 6 | Document OAuth account linking policy | PRD + API docs |
-| 7 | Document Razorpay cancel flow (API call + webhook) | API + Backend docs |
-| 8 | Add contest/problems/submissions schema (document only) | DATABASE.md |
+| #   | Action                                                                                    | Owner                   |
+| --- | ----------------------------------------------------------------------------------------- | ----------------------- |
+| 1   | Remove `POST /subscriptions/verify` as client-trusted endpoint; webhook as sole activator | API + Backend docs      |
+| 2   | Fix subscription creation flow: PENDING until webhook confirms                            | Backend + DB docs       |
+| 3   | Document cross-domain cookie strategy (Domain, SameSite, Secure)                          | Frontend + Backend docs |
+| 4   | Add `webhook_events` table for idempotency                                                | DATABASE.md + schema    |
+| 5   | Add `password_reset_tokens` table                                                         | DATABASE.md + schema    |
+| 6   | Document OAuth account linking policy                                                     | PRD + API docs          |
+| 7   | Document Razorpay cancel flow (API call + webhook)                                        | API + Backend docs      |
+| 8   | Add contest/problems/submissions schema (document only)                                   | DATABASE.md             |
 
 ### P1 — Fix During Phase 1
 
-| # | Action |
-|---|--------|
-| 1 | Split Phase 1 migration (auth + billing only) |
-| 2 | Fix auth token storage strategy (httpOnly cookie for access token) |
-| 3 | Validate Google redirectUri server-side |
-| 4 | Add email verification flow |
-| 5 | Subscription guard: handle CANCELLED grace period |
-| 6 | JwtStrategy: check isActive, deletedAt |
-| 7 | Refresh token rotation + reuse detection |
-| 8 | Revoke tokens on password change |
-| 9 | Remove razorpay_signature from payments table |
-| 10 | Defer Cloudinary to Phase 4; use Google avatar URL |
-| 11 | Add shared types strategy (OpenAPI codegen) |
-| 12 | Add Sentry before production deploy |
+| #   | Action                                                             |
+| --- | ------------------------------------------------------------------ |
+| 1   | Split Phase 1 migration (auth + billing only)                      |
+| 2   | Fix auth token storage strategy (httpOnly cookie for access token) |
+| 3   | Validate Google redirectUri server-side                            |
+| 4   | Add email verification flow                                        |
+| 5   | Subscription guard: handle CANCELLED grace period                  |
+| 6   | JwtStrategy: check isActive, deletedAt                             |
+| 7   | Refresh token rotation + reuse detection                           |
+| 8   | Revoke tokens on password change                                   |
+| 9   | Remove razorpay_signature from payments table                      |
+| 10  | Defer Cloudinary to Phase 4; use Google avatar URL                 |
+| 11  | Add shared types strategy (OpenAPI codegen)                        |
+| 12  | Add Sentry before production deploy                                |
 
 ---
 
 ## 10. Architecture Decision Records (ADRs) to Create
 
-| ADR | Decision |
-|-----|----------|
+| ADR     | Decision                                                    |
+| ------- | ----------------------------------------------------------- |
 | ADR-001 | Webhook-authoritative payment activation (no client verify) |
-| ADR-002 | httpOnly cookie auth (access + refresh) vs Bearer token |
-| ADR-003 | Phase-split database migrations |
-| ADR-004 | Single `service_bookings` table vs four premium tables |
-| ADR-005 | Subscription history model (multiple rows per user) |
-| ADR-006 | Contest leaderboard: computed vs materialized |
+| ADR-002 | httpOnly cookie auth (access + refresh) vs Bearer token     |
+| ADR-003 | Phase-split database migrations                             |
+| ADR-004 | Single `service_bookings` table vs four premium tables      |
+| ADR-005 | Subscription history model (multiple rows per user)         |
+| ADR-006 | Contest leaderboard: computed vs materialized               |
 
 ---
 
@@ -944,13 +950,13 @@ None of these are architectural dead-ends — they are fixable with documentatio
 
 ## Appendix: Document Consistency Issues
 
-| Issue | Location A | Location B |
-|-------|-----------|-----------|
-| Access token in cookie vs memory | `middleware.ts` checks cookie | Auth design uses Bearer header |
-| Subscription ACTIVE on create | Backend service example | Should be PENDING |
-| ip_address INET vs String | DATABASE.md | prisma/schema.prisma |
-| Notifications in Phase 1 vs Phase 2 | PRD §5.3 (Phase 2) | IMPLEMENTATION_PLAN (Phase 1 admin only) |
-| Landing page at `/` and `(marketing)/page.tsx` | FRONTEND_ARCHITECTURE | Duplicate route risk |
-| `develop` branch required | PROJECT_RULES.md | IMPLEMENTATION_PLAN (not mentioned) |
+| Issue                                          | Location A                    | Location B                               |
+| ---------------------------------------------- | ----------------------------- | ---------------------------------------- |
+| Access token in cookie vs memory               | `middleware.ts` checks cookie | Auth design uses Bearer header           |
+| Subscription ACTIVE on create                  | Backend service example       | Should be PENDING                        |
+| ip_address INET vs String                      | DATABASE.md                   | prisma/schema.prisma                     |
+| Notifications in Phase 1 vs Phase 2            | PRD §5.3 (Phase 2)            | IMPLEMENTATION_PLAN (Phase 1 admin only) |
+| Landing page at `/` and `(marketing)/page.tsx` | FRONTEND_ARCHITECTURE         | Duplicate route risk                     |
+| `develop` branch required                      | PROJECT_RULES.md              | IMPLEMENTATION_PLAN (not mentioned)      |
 
 These should be reconciled when updating documentation.

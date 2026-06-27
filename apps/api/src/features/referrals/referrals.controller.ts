@@ -47,10 +47,7 @@ export class ReferralsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createReferral(
-    @CurrentUser() user: User,
-    @Body() dto: CreateReferralDto,
-  ) {
+  createReferral(@CurrentUser() user: User, @Body() dto: CreateReferralDto) {
     return this.referralsService.createReferral(user, dto);
   }
 

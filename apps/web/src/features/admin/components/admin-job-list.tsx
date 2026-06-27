@@ -31,7 +31,14 @@ export function AdminJobList() {
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     createJob.mutate(
-      { title, company, description, location: location || undefined, jobType, applyUrl },
+      {
+        title,
+        company,
+        description,
+        location: location || undefined,
+        jobType,
+        applyUrl,
+      },
       {
         onSuccess: () => {
           setShowForm(false);
@@ -50,7 +57,9 @@ export function AdminJobList() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Manage jobs</h1>
-          <p className="mt-1 text-muted-foreground">Create and curate job listings.</p>
+          <p className="mt-1 text-muted-foreground">
+            Create and curate job listings.
+          </p>
         </div>
         <Button onClick={() => setShowForm((v) => !v)}>
           {showForm ? 'Cancel' : 'New job'}
@@ -64,11 +73,19 @@ export function AdminJobList() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Title</Label>
-                  <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
+                  <Input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Company</Label>
-                  <Input value={company} onChange={(e) => setCompany(e.target.value)} required />
+                  <Input
+                    value={company}
+                    onChange={(e) => setCompany(e.target.value)}
+                    required
+                  />
                 </div>
               </div>
               <div className="space-y-2">
@@ -84,7 +101,10 @@ export function AdminJobList() {
               <div className="grid gap-4 sm:grid-cols-3">
                 <div className="space-y-2">
                   <Label>Location</Label>
-                  <Input value={location} onChange={(e) => setLocation(e.target.value)} />
+                  <Input
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Type</Label>
@@ -132,7 +152,11 @@ export function AdminJobList() {
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <a href={job.applyUrl} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={job.applyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Button variant="outline" size="sm">
                       View apply link
                     </Button>

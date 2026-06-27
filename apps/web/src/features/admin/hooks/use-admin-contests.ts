@@ -85,7 +85,9 @@ export function useCreateQuizQuestion() {
       };
     }) => adminContestsApi.createQuizQuestion(contestId, payload),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['admin', 'quiz-questions'] });
+      void queryClient.invalidateQueries({
+        queryKey: ['admin', 'quiz-questions'],
+      });
     },
   });
 }
@@ -101,7 +103,9 @@ export function useDeleteQuizQuestion() {
       questionId: string;
     }) => adminContestsApi.deleteQuizQuestion(contestId, questionId),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['admin', 'quiz-questions'] });
+      void queryClient.invalidateQueries({
+        queryKey: ['admin', 'quiz-questions'],
+      });
     },
   });
 }

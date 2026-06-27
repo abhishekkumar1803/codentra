@@ -13,10 +13,7 @@ import {
 import { Role } from '@prisma/client';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import {
-  CreateQuizQuestionDto,
-  UpdateQuizQuestionDto,
-} from './dto/quiz.dto';
+import { CreateQuizQuestionDto, UpdateQuizQuestionDto } from './dto/quiz.dto';
 import { QuizzesService } from './quizzes.service';
 
 @Controller('admin/contests/:contestId/quiz/questions')

@@ -68,9 +68,7 @@ export class AdminService {
     ]);
 
     const churnRate =
-      activeStartOfMonth > 0
-        ? cancelledThisMonth / activeStartOfMonth
-        : 0;
+      activeStartOfMonth > 0 ? cancelledThisMonth / activeStartOfMonth : 0;
 
     return {
       totalUsers,
@@ -93,8 +91,12 @@ export class AdminService {
       ...(query.search
         ? {
             OR: [
-              { name: { contains: query.search, mode: 'insensitive' as const } },
-              { email: { contains: query.search, mode: 'insensitive' as const } },
+              {
+                name: { contains: query.search, mode: 'insensitive' as const },
+              },
+              {
+                email: { contains: query.search, mode: 'insensitive' as const },
+              },
             ],
           }
         : {}),

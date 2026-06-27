@@ -29,7 +29,10 @@ export class EmailService {
     }
 
     const apiKey = this.config.get<string>('RESEND_API_KEY');
-    const from = this.config.get('RESEND_FROM', 'Codentra <noreply@codentra.dev>');
+    const from = this.config.get(
+      'RESEND_FROM',
+      'Codentra <noreply@codentra.dev>',
+    );
 
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',

@@ -52,21 +52,27 @@ export function SubscriptionStatus({
         {subscription.status === 'ACTIVE' && (
           <p className="text-muted-foreground">
             Renews on{' '}
-            {new Date(subscription.currentPeriodEnd).toLocaleDateString('en-IN', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })}
+            {new Date(subscription.currentPeriodEnd).toLocaleDateString(
+              'en-IN',
+              {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              },
+            )}
           </p>
         )}
         {subscription.status === 'CANCELLED' && (
           <p className="text-muted-foreground">
             Access until{' '}
-            {new Date(subscription.currentPeriodEnd).toLocaleDateString('en-IN', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })}
+            {new Date(subscription.currentPeriodEnd).toLocaleDateString(
+              'en-IN',
+              {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              },
+            )}
           </p>
         )}
         {subscription.status === 'PENDING' && (

@@ -50,9 +50,7 @@ export function ContestActivityChart({
           </p>
           <p className="text-2xl font-bold">{history.length} contests</p>
         </div>
-        <p className="text-xs text-muted-foreground">
-          Score per participation
-        </p>
+        <p className="text-xs text-muted-foreground">Score per participation</p>
       </div>
 
       <svg
@@ -93,7 +91,8 @@ export function ContestActivityChart({
                 fill={color}
                 opacity={0.85}
               />
-              {(history.length <= 8 || i % Math.ceil(history.length / 8) === 0) && (
+              {(history.length <= 8 ||
+                i % Math.ceil(history.length / 8) === 0) && (
                 <text
                   x={x + barWidth / 2}
                   y={height - 8}

@@ -29,9 +29,24 @@ export class ReferralsService {
       ...(query.search
         ? {
             OR: [
-              { company: { contains: query.search, mode: 'insensitive' as const } },
-              { roleTitle: { contains: query.search, mode: 'insensitive' as const } },
-              { description: { contains: query.search, mode: 'insensitive' as const } },
+              {
+                company: {
+                  contains: query.search,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                roleTitle: {
+                  contains: query.search,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                description: {
+                  contains: query.search,
+                  mode: 'insensitive' as const,
+                },
+              },
             ],
           }
         : {}),
@@ -107,9 +122,15 @@ export class ReferralsService {
       data: {
         ...(dto.company !== undefined ? { company: dto.company } : {}),
         ...(dto.roleTitle !== undefined ? { roleTitle: dto.roleTitle } : {}),
-        ...(dto.description !== undefined ? { description: dto.description } : {}),
-        ...(dto.requirements !== undefined ? { requirements: dto.requirements } : {}),
-        ...(dto.contactEmail !== undefined ? { contactEmail: dto.contactEmail } : {}),
+        ...(dto.description !== undefined
+          ? { description: dto.description }
+          : {}),
+        ...(dto.requirements !== undefined
+          ? { requirements: dto.requirements }
+          : {}),
+        ...(dto.contactEmail !== undefined
+          ? { contactEmail: dto.contactEmail }
+          : {}),
         ...(dto.status !== undefined ? { status: dto.status } : {}),
       },
       include: {
@@ -151,7 +172,9 @@ export class ReferralsService {
     }
 
     if (referral.referrerId === user.id) {
-      throw new ForbiddenException('Cannot express interest on your own referral.');
+      throw new ForbiddenException(
+        'Cannot express interest on your own referral.',
+      );
     }
 
     const interestMessage =

@@ -1,8 +1,4 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { SubscriptionStatus } from '@prisma/client';
 import { REQUIRE_SUBSCRIPTION_KEY } from '../decorators/require-subscription.decorator';
@@ -23,7 +19,9 @@ export class SubscriptionGuard implements CanActivate {
     );
     if (!required) return true;
 
-    const request = context.switchToHttp().getRequest<{ user?: { id: string } }>();
+    const request = context
+      .switchToHttp()
+      .getRequest<{ user?: { id: string } }>();
     const userId = request.user?.id;
     if (!userId) return false;
 

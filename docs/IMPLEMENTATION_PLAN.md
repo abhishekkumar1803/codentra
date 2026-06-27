@@ -19,13 +19,13 @@ This document outlines the five-phase implementation plan for Codentra. Each pha
 
 ### 1.2 Timeline Summary
 
-| Phase | Duration | Target Completion | Version |
-|-------|----------|-------------------|---------|
-| Phase 1 | 6 weeks | Week 6 | v0.1.0 |
-| Phase 2 | 6 weeks | Week 12 | v0.2.0 |
-| Phase 3 | 6 weeks | Week 18 | v0.3.0 |
-| Phase 4 | 6 weeks | Week 24 | v0.4.0 |
-| Phase 5 | 6+ weeks | Week 30+ | v1.0.0 |
+| Phase   | Duration | Target Completion | Version |
+| ------- | -------- | ----------------- | ------- |
+| Phase 1 | 6 weeks  | Week 6            | v0.1.0  |
+| Phase 2 | 6 weeks  | Week 12           | v0.2.0  |
+| Phase 3 | 6 weeks  | Week 18           | v0.3.0  |
+| Phase 4 | 6 weeks  | Week 24           | v0.4.0  |
+| Phase 5 | 6+ weeks | Week 30+          | v1.0.0  |
 
 ---
 
@@ -37,20 +37,21 @@ This document outlines the five-phase implementation plan for Codentra. Each pha
 
 ### 2.1 Deliverables
 
-| # | Feature | Priority |
-|---|---------|----------|
-| 1 | Project setup (monorepo, CI, env) | P0 |
-| 2 | Landing page | P0 |
-| 3 | Authentication (email + Google) | P0 |
-| 4 | Membership subscription (Razorpay) | P0 |
-| 5 | User dashboard | P0 |
-| 6 | Admin dashboard | P0 |
+| #   | Feature                            | Priority |
+| --- | ---------------------------------- | -------- |
+| 1   | Project setup (monorepo, CI, env)  | P0       |
+| 2   | Landing page                       | P0       |
+| 3   | Authentication (email + Google)    | P0       |
+| 4   | Membership subscription (Razorpay) | P0       |
+| 5   | User dashboard                     | P0       |
+| 6   | Admin dashboard                    | P0       |
 
 ### 2.2 Week-by-Week Breakdown
 
 #### Week 1: Project Setup & Landing Page
 
 **Backend:**
+
 - [ ] Initialize NestJS project with TypeScript strict mode
 - [ ] Configure Prisma with Neon PostgreSQL
 - [ ] Run initial migration (full schema)
@@ -59,6 +60,7 @@ This document outlines the five-phase implementation plan for Codentra. Each pha
 - [ ] Seed script (admin user)
 
 **Frontend:**
+
 - [ ] Initialize Next.js 15 with App Router
 - [ ] Configure Tailwind CSS + Shadcn UI
 - [ ] Set up shared lib (api-client, query-client, utils)
@@ -68,6 +70,7 @@ This document outlines the five-phase implementation plan for Codentra. Each pha
 - [ ] SEO metadata
 
 **DevOps:**
+
 - [ ] ESLint + Prettier configuration
 - [ ] Husky pre-commit hooks
 - [ ] GitHub Actions CI (lint, type-check)
@@ -80,6 +83,7 @@ This document outlines the five-phase implementation plan for Codentra. Each pha
 #### Week 2: Authentication (Backend)
 
 **Backend:**
+
 - [ ] Auth module (register, login, logout, refresh)
 - [ ] JWT strategy (access + refresh tokens)
 - [ ] Google OAuth strategy
@@ -99,6 +103,7 @@ This document outlines the five-phase implementation plan for Codentra. Each pha
 #### Week 3: Authentication (Frontend)
 
 **Frontend:**
+
 - [ ] Auth feature module (components, hooks, api, schemas)
 - [ ] Login page (email + Google)
 - [ ] Register page
@@ -118,6 +123,7 @@ This document outlines the five-phase implementation plan for Codentra. Each pha
 #### Week 4: Subscription & Payments
 
 **Backend:**
+
 - [ ] Subscriptions module (create, verify, cancel, get)
 - [ ] Payments module (history, record keeping)
 - [ ] Razorpay integration service
@@ -128,6 +134,7 @@ This document outlines the five-phase implementation plan for Codentra. Each pha
 - [ ] Subscription integration tests
 
 **Frontend:**
+
 - [ ] Subscription feature module
 - [ ] Pricing/checkout page with Razorpay modal
 - [ ] Subscription status component
@@ -143,11 +150,13 @@ This document outlines the five-phase implementation plan for Codentra. Each pha
 #### Week 5: User Dashboard
 
 **Backend:**
+
 - [ ] Users module (profile update, avatar upload)
 - [ ] Cloudinary integration for avatar upload
 - [ ] GET /auth/me with subscription data
 
 **Frontend:**
+
 - [ ] Dashboard layout (sidebar, header, mobile nav)
 - [ ] Dashboard home page (welcome, subscription status, quick links)
 - [ ] Profile settings page (name, avatar)
@@ -164,11 +173,13 @@ This document outlines the five-phase implementation plan for Codentra. Each pha
 #### Week 6: Admin Dashboard & Phase 1 Polish
 
 **Backend:**
+
 - [ ] Admin module (metrics, user list, user detail, subscriptions, payments)
 - [ ] Activity logs module (query, filter)
 - [ ] Admin endpoints with RolesGuard
 
 **Frontend:**
+
 - [ ] Admin layout with role check
 - [ ] Admin overview (metrics cards)
 - [ ] Users list (search, filter, paginate)
@@ -179,6 +190,7 @@ This document outlines the five-phase implementation plan for Codentra. Each pha
 - [ ] Admin e2e tests
 
 **Polish:**
+
 - [ ] End-to-end testing of all Phase 1 flows
 - [ ] Bug fixes and UX improvements
 - [ ] Performance audit (Lighthouse)
@@ -222,18 +234,19 @@ Project Setup
 
 ### 3.1 Deliverables
 
-| # | Feature | Priority |
-|---|---------|----------|
-| 1 | Contest module (DSA, CP, Quiz) | P0 |
-| 2 | Contest participation flow | P0 |
-| 3 | Leaderboards (contest + global) | P0 |
-| 4 | Notifications (in-app + email) | P1 |
-| 5 | Subscription guard for contests | P0 |
-| 6 | Admin contest management | P0 |
+| #   | Feature                         | Priority |
+| --- | ------------------------------- | -------- |
+| 1   | Contest module (DSA, CP, Quiz)  | P0       |
+| 2   | Contest participation flow      | P0       |
+| 3   | Leaderboards (contest + global) | P0       |
+| 4   | Notifications (in-app + email)  | P1       |
+| 5   | Subscription guard for contests | P0       |
+| 6   | Admin contest management        | P0       |
 
 ### 3.2 Week-by-Week Breakdown
 
 #### Week 7–8: Contests (Backend + Frontend)
+
 - Contest CRUD (admin)
 - Contest listing with filters (type, status)
 - Contest detail page
@@ -242,24 +255,28 @@ Project Setup
 - Contest status lifecycle (DRAFT → SCHEDULED → LIVE → ENDED)
 
 #### Week 9: Quizzes
+
 - Quiz-specific contest type
 - MCQ question structure (metadata JSON)
 - Quiz submission and scoring
 - Quiz results page
 
 #### Week 10: Leaderboards
+
 - Leaderboard service (compute ranks after contest)
 - Global leaderboards (weekly, monthly, all-time)
 - Contest-specific leaderboards
 - Leaderboard pages with pagination
 
 #### Week 11: Notifications
+
 - Notification module (create, list, mark read)
 - In-app notification bell + dropdown
 - Email notifications for contest reminders (Resend)
 - Notification preferences (future)
 
 #### Week 12: Polish & Deploy
+
 - SubscriptionGuard on contest endpoints
 - Admin contest management UI
 - E2E tests for contest flows
@@ -283,22 +300,24 @@ Project Setup
 
 ### 4.1 Deliverables
 
-| # | Feature | Priority |
-|---|---------|----------|
-| 1 | Jobs board | P0 |
-| 2 | Referral board | P0 |
-| 3 | System design challenges | P1 |
-| 4 | Admin job management | P0 |
+| #   | Feature                  | Priority |
+| --- | ------------------------ | -------- |
+| 1   | Jobs board               | P0       |
+| 2   | Referral board           | P0       |
+| 3   | System design challenges | P1       |
+| 4   | Admin job management     | P0       |
 
 ### 4.2 Week-by-Week Breakdown
 
 #### Week 13–14: Jobs Board
+
 - Jobs module (CRUD, list, filter, search)
 - Jobs listing page with filters (remote, company, search)
 - Job detail page with apply link
 - Admin job creation and management
 
 #### Week 15–16: Referral Board
+
 - Referrals module (CRUD, list, filter)
 - Referral listing page
 - Create referral form
@@ -306,11 +325,13 @@ Project Setup
 - Admin moderation
 
 #### Week 17: System Design Challenges
+
 - System design contest type
 - Submission flow (text/diagram upload via Cloudinary)
 - Peer review mechanism (basic)
 
 #### Week 18: Polish & Deploy
+
 - E2E tests for jobs and referrals
 - Deploy v0.3.0
 
@@ -331,18 +352,19 @@ Project Setup
 
 ### 5.1 Deliverables
 
-| # | Feature | Priority |
-|---|---------|----------|
-| 1 | Resume review service | P0 |
-| 2 | Mock interview booking | P0 |
-| 3 | Career guidance call booking | P0 |
-| 4 | LinkedIn review service | P1 |
-| 5 | Premium services dashboard | P0 |
-| 6 | Mentor assignment workflow | P1 |
+| #   | Feature                      | Priority |
+| --- | ---------------------------- | -------- |
+| 1   | Resume review service        | P0       |
+| 2   | Mock interview booking       | P0       |
+| 3   | Career guidance call booking | P0       |
+| 4   | LinkedIn review service      | P1       |
+| 5   | Premium services dashboard   | P0       |
+| 6   | Mentor assignment workflow   | P1       |
 
 ### 5.2 Week-by-Week Breakdown
 
 #### Week 19–20: Resume & LinkedIn Review
+
 - Resume review service (upload, payment, review workflow)
 - LinkedIn review service
 - Cloudinary integration for resume upload
@@ -350,17 +372,20 @@ Project Setup
 - Feedback delivery
 
 #### Week 21–22: Mock Interview & Career Call
+
 - Mock interview booking (schedule, payment, meeting link)
 - Career guidance call booking
 - Calendar/scheduling UI
 - Email confirmations and reminders
 
 #### Week 23: Premium Dashboard
+
 - User services page (all bookings, status tracking)
 - Service status components (pending, scheduled, completed)
 - Payment integration for each service type
 
 #### Week 24: Polish & Deploy
+
 - Mentor role and basic mentor view
 - E2E tests for premium flows
 - Deploy v0.4.0
@@ -382,19 +407,20 @@ Project Setup
 
 ### 6.1 Deliverables
 
-| # | Feature | Priority |
-|---|---------|----------|
-| 1 | Redis caching (leaderboards) | P1 |
-| 2 | Advanced analytics dashboard | P1 |
-| 3 | Mentor portal | P1 |
-| 4 | PWA support | P2 |
-| 5 | Performance optimization | P0 |
-| 6 | Security audit | P0 |
-| 7 | Load testing (100k users) | P0 |
+| #   | Feature                      | Priority |
+| --- | ---------------------------- | -------- |
+| 1   | Redis caching (leaderboards) | P1       |
+| 2   | Advanced analytics dashboard | P1       |
+| 3   | Mentor portal                | P1       |
+| 4   | PWA support                  | P2       |
+| 5   | Performance optimization     | P0       |
+| 6   | Security audit               | P0       |
+| 7   | Load testing (100k users)    | P0       |
 
 ### 6.2 Key Activities
 
 #### Week 25–26: Performance & Caching
+
 - Redis integration for leaderboard caching
 - Database query optimization
 - API response caching
@@ -402,17 +428,20 @@ Project Setup
 - Image CDN optimization
 
 #### Week 27–28: Analytics & Mentor Portal
+
 - Advanced admin analytics (charts, trends, cohort analysis)
 - Mentor portal (assigned services, schedule, feedback)
 - User growth tracking
 
 #### Week 29: Security & Load Testing
+
 - OWASP security audit
 - Penetration testing
 - Load testing with k6 (simulate 10k concurrent users)
 - Fix identified issues
 
 #### Week 30+: Launch Preparation
+
 - PWA manifest and service worker
 - Final bug fixes
 - Documentation review
@@ -471,28 +500,28 @@ For every feature in every phase, follow this sequence:
 
 ## 8. Risk Register
 
-| Risk | Phase | Impact | Mitigation |
-|------|-------|--------|------------|
-| Razorpay integration delays | 1 | High | Week 1 spike; sandbox testing |
-| Google OAuth approval delays | 1 | Medium | Email auth as primary; Google as enhancement |
-| Contest content scarcity | 2 | Medium | Admin tools ready; seed 5 contests before launch |
-| Mentor availability | 4 | Medium | Start with admin-as-mentor; recruit mentors in Phase 3 |
-| Database performance at scale | 5 | Medium | Indexes designed upfront; read replicas at 10k users |
-| Scope creep | All | High | Strict phase gates; PRD change control process |
+| Risk                          | Phase | Impact | Mitigation                                             |
+| ----------------------------- | ----- | ------ | ------------------------------------------------------ |
+| Razorpay integration delays   | 1     | High   | Week 1 spike; sandbox testing                          |
+| Google OAuth approval delays  | 1     | Medium | Email auth as primary; Google as enhancement           |
+| Contest content scarcity      | 2     | Medium | Admin tools ready; seed 5 contests before launch       |
+| Mentor availability           | 4     | Medium | Start with admin-as-mentor; recruit mentors in Phase 3 |
+| Database performance at scale | 5     | Medium | Indexes designed upfront; read replicas at 10k users   |
+| Scope creep                   | All   | High   | Strict phase gates; PRD change control process         |
 
 ---
 
 ## 9. Team & Responsibilities
 
-| Role | Responsibility |
-|------|---------------|
+| Role                 | Responsibility                                     |
+| -------------------- | -------------------------------------------------- |
 | Lead Architect / CTO | Architecture decisions, code review, documentation |
-| Backend Developer | NestJS modules, Prisma, integrations |
-| Frontend Developer | Next.js pages, components, state management |
-| DevOps | CI/CD, deployment, monitoring |
-| QA | E2E tests, manual testing, bug reports |
+| Backend Developer    | NestJS modules, Prisma, integrations               |
+| Frontend Developer   | Next.js pages, components, state management        |
+| DevOps               | CI/CD, deployment, monitoring                      |
+| QA                   | E2E tests, manual testing, bug reports             |
 
-*Note: In early stages, one developer may cover multiple roles.*
+_Note: In early stages, one developer may cover multiple roles._
 
 ---
 
@@ -522,6 +551,7 @@ A phase is **done** when all its features meet the Definition of Done and succes
 **This implementation plan requires approval before any code is written.**
 
 Upon approval:
+
 1. Phase 1, Week 1 begins immediately.
 2. Project setup and landing page are the first deliverables.
 3. Weekly progress updates via `TASKS.md`.

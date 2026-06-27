@@ -106,7 +106,9 @@ export default function JobsPage() {
             <Card className="h-full transition-shadow hover:shadow-md">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg">{job.title}</CardTitle>
-                <p className="text-sm font-medium text-primary">{job.company}</p>
+                <p className="text-sm font-medium text-primary">
+                  {job.company}
+                </p>
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-muted-foreground">
                 <p>

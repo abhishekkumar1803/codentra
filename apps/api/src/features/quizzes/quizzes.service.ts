@@ -211,7 +211,9 @@ export class QuizzesService {
       include: {
         quizAnswers: {
           include: {
-            question: { include: { options: { orderBy: { orderIndex: 'asc' } } } },
+            question: {
+              include: { options: { orderBy: { orderIndex: 'asc' } } },
+            },
             option: true,
           },
         },
@@ -343,7 +345,9 @@ export class QuizzesService {
         data: {
           ...(dto.text !== undefined ? { text: dto.text } : {}),
           ...(dto.points !== undefined ? { points: dto.points } : {}),
-          ...(dto.orderIndex !== undefined ? { orderIndex: dto.orderIndex } : {}),
+          ...(dto.orderIndex !== undefined
+            ? { orderIndex: dto.orderIndex }
+            : {}),
           ...(dto.options
             ? {
                 options: {
@@ -424,9 +428,7 @@ export class QuizzesService {
     return participant;
   }
 
-  private validateOptions(
-    options: { isCorrect: boolean }[],
-  ) {
+  private validateOptions(options: { isCorrect: boolean }[]) {
     const correctCount = options.filter((o) => o.isCorrect).length;
     if (correctCount !== 1) {
       throw new BadRequestException('QUIZ_INVALID_OPTIONS');

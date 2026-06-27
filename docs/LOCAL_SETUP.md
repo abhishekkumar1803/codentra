@@ -37,12 +37,12 @@ pnpm dev:clean
 
 ## URLs
 
-| Service | URL |
-|---------|-----|
-| Frontend | http://localhost:3000 |
-| API health | http://localhost:3001/api/v1/health |
-| Judge0 CE | http://localhost:2358 (`JUDGE0_API_URL`) |
-| Judge0 docs | http://localhost:2358/docs |
+| Service     | URL                                      |
+| ----------- | ---------------------------------------- |
+| Frontend    | http://localhost:3000                    |
+| API health  | http://localhost:3001/api/v1/health      |
+| Judge0 CE   | http://localhost:2358 (`JUDGE0_API_URL`) |
+| Judge0 docs | http://localhost:2358/docs               |
 
 ## Database
 

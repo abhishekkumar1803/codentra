@@ -41,7 +41,10 @@ export function HeroSection() {
           ) : isLoggedIn ? (
             <>
               <Link href="/contests">
-                <Button size="lg" className="transition-transform hover:scale-105">
+                <Button
+                  size="lg"
+                  className="transition-transform hover:scale-105"
+                >
                   Go to Contests →
                 </Button>
               </Link>
@@ -54,7 +57,10 @@ export function HeroSection() {
           ) : (
             <>
               <Link href="/register">
-                <Button size="lg" className="transition-transform hover:scale-105">
+                <Button
+                  size="lg"
+                  className="transition-transform hover:scale-105"
+                >
                   Start for ₹49/month
                 </Button>
               </Link>

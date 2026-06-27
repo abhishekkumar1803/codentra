@@ -90,11 +90,7 @@ export async function apiRequest<T>(
 
   if (!json.success) {
     const err = json as ApiErrorResponse;
-    throw new ApiError(
-      err.error.code,
-      err.error.message,
-      err.error.details,
-    );
+    throw new ApiError(err.error.code, err.error.message, err.error.details);
   }
 
   return (json as ApiSuccessResponse<T>).data;

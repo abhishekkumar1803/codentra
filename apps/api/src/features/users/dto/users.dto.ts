@@ -2,7 +2,6 @@ import {
   IsArray,
   IsOptional,
   IsString,
-  IsUrl,
   MaxLength,
   MinLength,
 } from 'class-validator';

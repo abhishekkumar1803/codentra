@@ -32,18 +32,18 @@ export function ContestFilters({
   return (
     <div className="flex flex-wrap gap-2">
       {!hideTypeFilter && (
-      <div className="flex flex-wrap gap-1">
-        {contestTypes.map((t) => (
-          <Button
-            key={t.value || 'all-types'}
-            size="sm"
-            variant={type === t.value ? 'default' : 'outline'}
-            onClick={() => onTypeChange(t.value)}
-          >
-            {t.label}
-          </Button>
-        ))}
-      </div>
+        <div className="flex flex-wrap gap-1">
+          {contestTypes.map((t) => (
+            <Button
+              key={t.value || 'all-types'}
+              size="sm"
+              variant={type === t.value ? 'default' : 'outline'}
+              onClick={() => onTypeChange(t.value)}
+            >
+              {t.label}
+            </Button>
+          ))}
+        </div>
       )}
       <div className="flex flex-wrap gap-1">
         {contestStatuses.map((s) => (

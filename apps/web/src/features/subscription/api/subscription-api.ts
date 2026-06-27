@@ -16,8 +16,9 @@ export const subscriptionApi = {
     if (params?.limit) search.set('limit', String(params.limit));
     if (params?.type) search.set('type', params.type);
     const qs = search.toString();
-    return api.get<{ items: Payment[]; meta: { page: number; limit: number; total: number } }>(
-      `/payments/me${qs ? `?${qs}` : ''}`,
-    );
+    return api.get<{
+      items: Payment[];
+      meta: { page: number; limit: number; total: number };
+    }>(`/payments/me${qs ? `?${qs}` : ''}`);
   },
 };

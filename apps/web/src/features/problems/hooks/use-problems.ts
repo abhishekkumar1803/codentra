@@ -19,8 +19,7 @@ export function useProblem(
   return useQuery({
     queryKey: ['problems', contestSlug, problemSlug],
     queryFn: () => problemsApi.get(contestSlug, problemSlug),
-    enabled:
-      (options?.enabled ?? true) && !!contestSlug && !!problemSlug,
+    enabled: (options?.enabled ?? true) && !!contestSlug && !!problemSlug,
   });
 }
 
@@ -32,8 +31,7 @@ export function useProblemSubmissions(
   return useQuery({
     queryKey: ['problems', contestSlug, problemSlug, 'submissions'],
     queryFn: () => problemsApi.listSubmissions(contestSlug, problemSlug),
-    enabled:
-      (options?.enabled ?? true) && !!contestSlug && !!problemSlug,
+    enabled: (options?.enabled ?? true) && !!contestSlug && !!problemSlug,
     refetchInterval: (query) => {
       const hasPending = query.state.data?.items.some(
         (s) => s.verdict === 'PENDING',

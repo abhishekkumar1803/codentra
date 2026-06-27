@@ -116,7 +116,9 @@ export function ReferralCard({ referral }: { referral: ReferralListItem }) {
 
                 {contact && (
                   <div className="text-sm">
-                    <p className="text-green-600">{expressInterest.data?.message}</p>
+                    <p className="text-green-600">
+                      {expressInterest.data?.message}
+                    </p>
                     {contact.mailtoLink ? (
                       <a
                         href={contact.mailtoLink}

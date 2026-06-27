@@ -4,7 +4,11 @@ import type { CodeLanguage } from '@prisma/client';
 import { mockJudge } from '../../features/problems/utils/mock-judge.util';
 import { resolveJudge0Settings } from './judge.config';
 import { Judge0Client } from './judge0.client';
-import type { JudgeProvider, JudgeRunParams, JudgeRunResult } from './judge.types';
+import type {
+  JudgeProvider,
+  JudgeRunParams,
+  JudgeRunResult,
+} from './judge.types';
 
 @Injectable()
 export class JudgeService implements OnModuleInit {

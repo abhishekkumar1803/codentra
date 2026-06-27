@@ -96,12 +96,12 @@ export function SubmissionDetailModal({
 
               {submission.verdictDetails?.input &&
                 !submission.verdictDetails.isHidden && (
-                <div className="rounded-md border bg-muted/30 p-3 font-mono text-xs">
-                  <p>Input: {submission.verdictDetails.input}</p>
-                  <p>Expected: {submission.verdictDetails.expectedOutput}</p>
-                  <p>Got: {submission.verdictDetails.actualOutput}</p>
-                </div>
-              )}
+                  <div className="rounded-md border bg-muted/30 p-3 font-mono text-xs">
+                    <p>Input: {submission.verdictDetails.input}</p>
+                    <p>Expected: {submission.verdictDetails.expectedOutput}</p>
+                    <p>Got: {submission.verdictDetails.actualOutput}</p>
+                  </div>
+                )}
 
               <div>
                 <p className="mb-2 text-sm font-medium">Submitted code</p>

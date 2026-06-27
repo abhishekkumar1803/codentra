@@ -53,9 +53,10 @@ export const adminJobsApi = {
   create: (payload: CreateJobPayload) =>
     api.post<JobListItem>('/admin/jobs', payload),
 
-  update: (id: string, payload: Partial<CreateJobPayload & { isActive: boolean }>) =>
-    api.patch<JobListItem>(`/admin/jobs/${id}`, payload),
+  update: (
+    id: string,
+    payload: Partial<CreateJobPayload & { isActive: boolean }>,
+  ) => api.patch<JobListItem>(`/admin/jobs/${id}`, payload),
 
-  delete: (id: string) =>
-    api.delete<{ message: string }>(`/admin/jobs/${id}`),
+  delete: (id: string) => api.delete<{ message: string }>(`/admin/jobs/${id}`),
 };

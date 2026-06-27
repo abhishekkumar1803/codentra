@@ -4,11 +4,7 @@ import {
   ConflictException,
   BadRequestException,
 } from '@nestjs/common';
-import {
-  ContestStatus,
-  ContestType,
-  type User,
-} from '@prisma/client';
+import { ContestStatus, ContestType, type User } from '@prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import { BusinessException } from '../../common/exceptions/business.exception';
 import type {
@@ -76,7 +72,12 @@ export class ContestsService {
         participants: userId
           ? {
               where: { userId },
-              select: { id: true, status: true, joinedAt: true, isVirtual: true },
+              select: {
+                id: true,
+                status: true,
+                joinedAt: true,
+                isVirtual: true,
+              },
             }
           : false,
         createdBy: { select: { id: true, name: true } },
@@ -244,7 +245,9 @@ export class ContestsService {
     }
 
     const slug = await uniqueSlug(dto.title, async (s) => {
-      const found = await this.prisma.contest.findUnique({ where: { slug: s } });
+      const found = await this.prisma.contest.findUnique({
+        where: { slug: s },
+      });
       return !!found;
     });
 
@@ -286,7 +289,9 @@ export class ContestsService {
     if (dto.title && dto.title !== existing.title) {
       slug = await uniqueSlug(dto.title, async (s) => {
         if (s === existing.slug) return false;
-        const found = await this.prisma.contest.findUnique({ where: { slug: s } });
+        const found = await this.prisma.contest.findUnique({
+          where: { slug: s },
+        });
         return !!found;
       });
     }
@@ -295,13 +300,17 @@ export class ContestsService {
       where: { id },
       data: {
         ...(dto.title !== undefined ? { title: dto.title, slug } : {}),
-        ...(dto.description !== undefined ? { description: dto.description } : {}),
+        ...(dto.description !== undefined
+          ? { description: dto.description }
+          : {}),
         ...(dto.type !== undefined ? { type: dto.type } : {}),
         ...(dto.status !== undefined ? { status: dto.status } : {}),
         ...(dto.startTime !== undefined
           ? { startTime: new Date(dto.startTime) }
           : {}),
-        ...(dto.endTime !== undefined ? { endTime: new Date(dto.endTime) } : {}),
+        ...(dto.endTime !== undefined
+          ? { endTime: new Date(dto.endTime) }
+          : {}),
         ...(dto.durationMinutes !== undefined
           ? { durationMinutes: dto.durationMinutes }
           : {}),

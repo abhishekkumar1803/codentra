@@ -5,7 +5,10 @@ import Link from 'next/link';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, Skeleton, cn } from '@codentra/ui';
 import type { CodeSubmission, RunCodeResult } from '@codentra/types';
-import { useContest, useJoinContest } from '@/features/contests/hooks/use-contests';
+import {
+  useContest,
+  useJoinContest,
+} from '@/features/contests/hooks/use-contests';
 import { ApiError } from '@/shared/lib/api-client';
 import { CodeEditor } from './code-editor';
 import { SubmissionDetailModal } from './submission-detail-modal';
@@ -136,10 +139,7 @@ export function ProblemSolverView({
       codeStorageKey(contestSlug, problemSlug, lang),
     );
     const starter =
-      stored ??
-      problem.starterCode[lang] ??
-      problem.starterCode.PYTHON ??
-      '';
+      stored ?? problem.starterCode[lang] ?? problem.starterCode.PYTHON ?? '';
     setSourceCode(starter);
     setCodeInitialized(true);
 
@@ -184,10 +184,7 @@ export function ProblemSolverView({
       codeStorageKey(contestSlug, problemSlug, language),
       sourceCode,
     );
-    localStorage.setItem(
-      languageStorageKey(contestSlug, problemSlug),
-      next,
-    );
+    localStorage.setItem(languageStorageKey(contestSlug, problemSlug), next);
     setLanguage(next);
     const stored = localStorage.getItem(
       codeStorageKey(contestSlug, problemSlug, next),
@@ -204,9 +201,7 @@ export function ProblemSolverView({
     const starter =
       problem.starterCode[language] ?? problem.starterCode.PYTHON ?? '';
     setSourceCode(starter);
-    localStorage.removeItem(
-      codeStorageKey(contestSlug, problemSlug, language),
-    );
+    localStorage.removeItem(codeStorageKey(contestSlug, problemSlug, language));
   };
 
   const formatActionError = (error: unknown) => {
@@ -695,11 +690,12 @@ function ResultPanel({
         </p>
         <p className={cn('font-semibold', VERDICT_STYLES[submission.verdict])}>
           {submission.verdict}
-          {submission.runtimeMs != null && submission.verdict === 'ACCEPTED' && (
-            <span className="ml-2 text-xs font-normal text-muted-foreground">
-              {submission.runtimeMs}ms
-            </span>
-          )}
+          {submission.runtimeMs != null &&
+            submission.verdict === 'ACCEPTED' && (
+              <span className="ml-2 text-xs font-normal text-muted-foreground">
+                {submission.runtimeMs}ms
+              </span>
+            )}
         </p>
         {submission.verdictDetails?.message && (
           <p className="text-xs text-muted-foreground">
@@ -714,12 +710,12 @@ function ResultPanel({
         )}
         {submission.verdictDetails?.input &&
           !submission.verdictDetails.isHidden && (
-          <div className="font-mono text-xs">
-            <p>Input: {submission.verdictDetails.input}</p>
-            <p>Expected: {submission.verdictDetails.expectedOutput}</p>
-            <p>Got: {submission.verdictDetails.actualOutput}</p>
-          </div>
-        )}
+            <div className="font-mono text-xs">
+              <p>Input: {submission.verdictDetails.input}</p>
+              <p>Expected: {submission.verdictDetails.expectedOutput}</p>
+              <p>Got: {submission.verdictDetails.actualOutput}</p>
+            </div>
+          )}
         <Button
           size="sm"
           variant="outline"

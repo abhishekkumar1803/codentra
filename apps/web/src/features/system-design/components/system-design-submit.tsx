@@ -34,7 +34,9 @@ export function SystemDesignSubmitView({ slug }: { slug: string }) {
     return (
       <Card>
         <CardContent className="py-12 text-center text-sm text-muted-foreground">
-          {error instanceof ApiError ? error.message : 'Challenge not available.'}
+          {error instanceof ApiError
+            ? error.message
+            : 'Challenge not available.'}
         </CardContent>
       </Card>
     );
@@ -52,7 +54,9 @@ export function SystemDesignSubmitView({ slug }: { slug: string }) {
         <h1 className="text-2xl font-bold">Submission received</h1>
         <Card>
           <CardContent className="py-6">
-            <p className="whitespace-pre-wrap text-sm">{challenge.submission.solution}</p>
+            <p className="whitespace-pre-wrap text-sm">
+              {challenge.submission.solution}
+            </p>
             {challenge.submission.diagramUrl && (
               <p className="mt-4 text-sm">
                 Diagram:{' '}
@@ -106,7 +110,9 @@ export function SystemDesignSubmitView({ slug }: { slug: string }) {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="solution">Architecture & design (min 100 chars)</Label>
+              <Label htmlFor="solution">
+                Architecture & design (min 100 chars)
+              </Label>
               <textarea
                 id="solution"
                 className="flex min-h-48 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -134,7 +140,10 @@ export function SystemDesignSubmitView({ slug }: { slug: string }) {
                   : 'Submission failed.'}
               </p>
             )}
-            <Button type="submit" disabled={submit.isPending || solution.length < 100}>
+            <Button
+              type="submit"
+              disabled={submit.isPending || solution.length < 100}
+            >
               {submit.isPending ? 'Submitting...' : 'Submit solution'}
             </Button>
           </form>

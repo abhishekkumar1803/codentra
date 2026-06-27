@@ -8,16 +8,16 @@
 
 ## Executive summary
 
-| Area | Dev today | Required for launch |
-|------|-----------|---------------------|
-| Hosting | Local Docker Postgres | Managed Postgres + API + Web on separate services |
-| Payments | `RAZORPAY_MOCK=true` | Live Razorpay + webhooks + reconciliation |
-| Code judge | Mock (sum-two-integers only) | Real sandbox (Judge0 / Piston / custom) |
-| Email | `RESEND_MOCK=true` | Resend live + templates |
-| Auth | JWT + refresh cookie | Harden cookies, OAuth prod URLs, CSRF |
-| DB | `db:push` | Versioned migrations + backups + connection pooling |
-| Observability | Console logs | Structured logging, errors, metrics, alerts |
-| CI | Lint/typecheck/test/build | + staging deploy + smoke tests |
+| Area          | Dev today                    | Required for launch                                 |
+| ------------- | ---------------------------- | --------------------------------------------------- |
+| Hosting       | Local Docker Postgres        | Managed Postgres + API + Web on separate services   |
+| Payments      | `RAZORPAY_MOCK=true`         | Live Razorpay + webhooks + reconciliation           |
+| Code judge    | Mock (sum-two-integers only) | Real sandbox (Judge0 / Piston / custom)             |
+| Email         | `RESEND_MOCK=true`           | Resend live + templates                             |
+| Auth          | JWT + refresh cookie         | Harden cookies, OAuth prod URLs, CSRF               |
+| DB            | `db:push`                    | Versioned migrations + backups + connection pooling |
+| Observability | Console logs                 | Structured logging, errors, metrics, alerts         |
+| CI            | Lint/typecheck/test/build    | + staging deploy + smoke tests                      |
 
 **Recommended launch sequence:** Staging → closed beta (50–100 users) → public launch.
 
@@ -60,6 +60,7 @@
 **Risk:** Every contest problem is fake for users.
 
 **Action:**
+
 1. Integrate **Judge0 API**, **Piston**, or self-hosted isolate (go-judge).
 2. Add `JUDGE_PROVIDER`, API keys, queue for submissions.
 3. Map verdicts: AC, WA, TLE, RE, CE — align with existing `SubmissionVerdict` + `verdictDetails`.
@@ -76,6 +77,7 @@
 **Today:** `RAZORPAY_MOCK=true` auto-activates subscriptions and service bookings.
 
 **Action:**
+
 1. Create Razorpay **live** account; complete KYC.
 2. Create subscription **plan** (₹49/month) → set `RAZORPAY_PLAN_ID`.
 3. Set env: `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, `RAZORPAY_MOCK=false`.
@@ -95,6 +97,7 @@
 **Today:** `pnpm db:push` (schema sync, no migration history).
 
 **Action:**
+
 1. Switch to `prisma migrate deploy` for production.
 2. Run `prisma migrate dev` locally to baseline current schema → commit `prisma/migrations/`.
 3. Neon (recommended) or Supabase/RDS:
@@ -113,6 +116,7 @@
 **Today:** Access token in memory + refresh httpOnly cookie; middleware checks `access_token` cookie (known gap per `ARCHITECTURE_REVIEW.md`).
 
 **Action:**
+
 1. Pick one strategy (recommend **httpOnly cookies for both** access + refresh, SameSite=Lax, Secure in prod).
 2. Implement BFF proxy at `apps/web/src/app/api/proxy/[...path]/route.ts` OR align middleware with actual token storage.
 3. Production secrets: `JWT_SECRET`, `JWT_REFRESH_SECRET` — 64+ char random, stored in host secret manager.
@@ -128,6 +132,7 @@
 ### P0-5 Environment & secrets management
 
 **Action:**
+
 1. Create **staging** and **production** env sets (never share DB between them).
 2. Use host secret managers (Vercel Env, Railway Variables, Doppler, or 1Password).
 3. Audit `apps/api/.env.example` + `apps/web/.env.example` — document every var.
@@ -140,13 +145,13 @@
 
 ### 1.1 Domains & DNS
 
-| Record | Target |
-|--------|--------|
-| `codentra.com` | Vercel (web) |
-| `www` | Redirect → apex |
-| `api.codentra.com` | Railway/Render (API) |
-| `staging.codentra.com` | Vercel preview/staging |
-| `api-staging.codentra.com` | Staging API |
+| Record                     | Target                 |
+| -------------------------- | ---------------------- |
+| `codentra.com`             | Vercel (web)           |
+| `www`                      | Redirect → apex        |
+| `api.codentra.com`         | Railway/Render (API)   |
+| `staging.codentra.com`     | Vercel preview/staging |
+| `api-staging.codentra.com` | Staging API            |
 
 Enable HTTPS everywhere; HSTS header on web.
 
@@ -184,13 +189,13 @@ node apps/api/dist/main.js   # or nest start --prod
 
 ### 1.4 CI/CD pipeline (extend `.github/workflows/ci.yml`)
 
-| Step | On PR | On merge to main |
-|------|-------|------------------|
-| typecheck, lint, test, build | ✓ | ✓ |
-| Deploy staging | — | ✓ auto |
-| Smoke test staging | — | ✓ |
-| Deploy production | — | manual approval |
-| `prisma migrate deploy` | — | ✓ before API boot |
+| Step                         | On PR | On merge to main  |
+| ---------------------------- | ----- | ----------------- |
+| typecheck, lint, test, build | ✓     | ✓                 |
+| Deploy staging               | —     | ✓ auto            |
+| Smoke test staging           | —     | ✓                 |
+| Deploy production            | —     | manual approval   |
+| `prisma migrate deploy`      | —     | ✓ before API boot |
 
 Add workflow: `deploy-staging.yml`, `deploy-production.yml`.
 
@@ -199,6 +204,7 @@ Add workflow: `deploy-staging.yml`, `deploy-production.yml`.
 ### 1.5 Redis (Phase 1 — high value)
 
 **Use cases:**
+
 - Leaderboard cache (P5-01 in TASKS.md)
 - Rate limiting (auth, submit, run)
 - Session blacklist on logout (optional)
@@ -242,6 +248,7 @@ Add workflow: `deploy-staging.yml`, `deploy-production.yml`.
 **Today:** `console.log` in email mock, Nest default logger.
 
 **Action:**
+
 1. Add **Pino** or **Winston** JSON logger in NestJS.
 2. Fields: `requestId`, `userId`, `method`, `path`, `statusCode`, `durationMs`.
 3. Redact: passwords, tokens, payment payloads.
@@ -259,13 +266,13 @@ Add workflow: `deploy-staging.yml`, `deploy-production.yml`.
 
 ### 3.3 Metrics & uptime
 
-| Metric | Tool |
-|--------|------|
-| Uptime | Better Uptime / UptimeRobot on `/health` |
-| API latency p95 | Host metrics or Sentry performance |
-| DB connections | Neon dashboard |
-| Payment success rate | Custom counter + Razorpay dashboard |
-| Submission judge latency | Custom histogram |
+| Metric                   | Tool                                     |
+| ------------------------ | ---------------------------------------- |
+| Uptime                   | Better Uptime / UptimeRobot on `/health` |
+| API latency p95          | Host metrics or Sentry performance       |
+| DB connections           | Neon dashboard                           |
+| Payment success rate     | Custom counter + Razorpay dashboard      |
+| Submission judge latency | Custom histogram                         |
 
 **Dashboards:** Grafana Cloud free tier or host-native (Railway metrics).
 
@@ -299,14 +306,15 @@ Add workflow: `deploy-staging.yml`, `deploy-production.yml`.
 
 Required before marketing spend:
 
-| Page | Purpose |
-|------|---------|
-| Terms of Service | Membership, contests, refunds |
-| Privacy Policy | Data collection, Razorpay, OAuth |
-| Refund / Cancellation | ₹49/month cancel anytime |
-| Contact / Support | support@codentra.com |
+| Page                  | Purpose                          |
+| --------------------- | -------------------------------- |
+| Terms of Service      | Membership, contests, refunds    |
+| Privacy Policy        | Data collection, Razorpay, OAuth |
+| Refund / Cancellation | ₹49/month cancel anytime         |
+| Contact / Support     | support@codentra.com             |
 
 **India-specific:**
+
 - GST invoice if applicable (consult CA; Razorpay can issue tax invoices).
 - Display registered business name on footer + checkout.
 
@@ -316,20 +324,20 @@ Required before marketing spend:
 
 ### Must work for launch
 
-| Feature | Status | Production task |
-|---------|--------|-----------------|
-| Auth (email + Google) | ✓ dev | OAuth prod URLs, rate limits |
-| Subscription ₹49 | mock | Live Razorpay |
-| Contests (DSA/CP) | ✓ UI | Real judge |
-| Virtual join / upsolve | ✓ | Load test submissions |
-| Quizzes | ✓ | — |
-| Leaderboards | ✓ | Redis cache at scale |
-| Jobs board | ✓ | Moderation workflow |
-| Referrals | ✓ | Spam/report abuse flow |
-| Services booking | mock pay | Live orders + mentor assign (P4-07) |
-| Admin panel | ✓ | Audit logs, role review |
-| Notifications | ✓ | Email for critical events |
-| Profile / ratings | ✓ | — |
+| Feature                | Status   | Production task                     |
+| ---------------------- | -------- | ----------------------------------- |
+| Auth (email + Google)  | ✓ dev    | OAuth prod URLs, rate limits        |
+| Subscription ₹49       | mock     | Live Razorpay                       |
+| Contests (DSA/CP)      | ✓ UI     | Real judge                          |
+| Virtual join / upsolve | ✓        | Load test submissions               |
+| Quizzes                | ✓        | —                                   |
+| Leaderboards           | ✓        | Redis cache at scale                |
+| Jobs board             | ✓        | Moderation workflow                 |
+| Referrals              | ✓        | Spam/report abuse flow              |
+| Services booking       | mock pay | Live orders + mentor assign (P4-07) |
+| Admin panel            | ✓        | Audit logs, role review             |
+| Notifications          | ✓        | Email for critical events           |
+| Profile / ratings      | ✓        | —                                   |
 
 ### Post-launch (v1.1)
 
@@ -355,12 +363,12 @@ Required before marketing spend:
 
 ### Targets (initial)
 
-| Endpoint | p95 |
-|----------|-----|
-| GET /contests | < 300ms |
+| Endpoint          | p95                     |
+| ----------------- | ----------------------- |
+| GET /contests     | < 300ms                 |
 | GET /leaderboards | < 500ms (cache < 100ms) |
-| POST submit | < 10s (judge dependent) |
-| POST /auth/login | < 200ms |
+| POST submit       | < 10s (judge dependent) |
+| POST /auth/login  | < 200ms                 |
 
 ---
 
@@ -377,12 +385,12 @@ Document in `docs/RUNBOOKS.md`:
 
 ### Scheduled jobs (add)
 
-| Job | Frequency | Purpose |
-|-----|-----------|---------|
-| Contest status | every 1 min | SCHEDULED→LIVE→ENDED |
-| Leaderboard recompute | on submit + nightly | consistency |
-| Subscription expiry check | daily | downgrade expired |
-| DB backup verify | weekly | restore drill |
+| Job                       | Frequency           | Purpose              |
+| ------------------------- | ------------------- | -------------------- |
+| Contest status            | every 1 min         | SCHEDULED→LIVE→ENDED |
+| Leaderboard recompute     | on submit + nightly | consistency          |
+| Subscription expiry check | daily               | downgrade expired    |
+| DB backup verify          | weekly              | restore drill        |
 
 Implement via **BullMQ** + Redis or host cron hitting internal endpoints.
 
@@ -448,19 +456,19 @@ SENTRY_DSN=...
 
 ## Cost estimate (early stage, ~500 users)
 
-| Service | Monthly (approx) |
-|---------|------------------|
-| Vercel Pro | $20 |
-| Railway/Render API | $20–50 |
-| Neon Postgres | $0–25 |
-| Upstash Redis | $0–10 |
-| Resend | $0–20 |
-| Cloudinary | $0 |
-| Razorpay | % per transaction |
-| Judge0 / Piston | $20–100 |
-| Sentry | $0–26 |
-| Domain + Cloudflare | $15 |
-| **Total** | **~$75–250/mo** + payment fees |
+| Service             | Monthly (approx)               |
+| ------------------- | ------------------------------ |
+| Vercel Pro          | $20                            |
+| Railway/Render API  | $20–50                         |
+| Neon Postgres       | $0–25                          |
+| Upstash Redis       | $0–10                          |
+| Resend              | $0–20                          |
+| Cloudinary          | $0                             |
+| Razorpay            | % per transaction              |
+| Judge0 / Piston     | $20–100                        |
+| Sentry              | $0–26                          |
+| Domain + Cloudflare | $15                            |
+| **Total**           | **~$75–250/mo** + payment fees |
 
 ---
 
@@ -483,21 +491,21 @@ Run against staging after every deploy:
 
 ## Priority matrix
 
-| Priority | Item | Owner | Est. |
-|----------|------|-------|------|
-| **P0** | Judge integration | Backend | 1–2 wk |
-| **P0** | Razorpay live + webhooks | Backend + Ops | 3–5 d |
-| **P0** | Prisma migrations + Neon | Backend | 2–3 d |
-| **P0** | Auth/cookie hardening | Full-stack | 3–5 d |
-| **P0** | Staging + CI deploy | DevOps | 3–5 d |
-| **P1** | Sentry + structured logs | Backend | 2–3 d |
-| **P1** | Resend + Cloudinary live | Backend | 1–2 d |
-| **P1** | Redis + rate limits | Backend | 2–3 d |
-| **P1** | Legal pages | Product/Legal | 3–5 d |
-| **P1** | Load testing | QA | 2–3 d |
-| **P2** | Contest status cron | Backend | 1–2 d |
-| **P2** | Mentor assignment flow | Product | 1 wk |
-| **P2** | Analytics dashboard | Product | 2 wk |
+| Priority | Item                     | Owner         | Est.   |
+| -------- | ------------------------ | ------------- | ------ |
+| **P0**   | Judge integration        | Backend       | 1–2 wk |
+| **P0**   | Razorpay live + webhooks | Backend + Ops | 3–5 d  |
+| **P0**   | Prisma migrations + Neon | Backend       | 2–3 d  |
+| **P0**   | Auth/cookie hardening    | Full-stack    | 3–5 d  |
+| **P0**   | Staging + CI deploy      | DevOps        | 3–5 d  |
+| **P1**   | Sentry + structured logs | Backend       | 2–3 d  |
+| **P1**   | Resend + Cloudinary live | Backend       | 1–2 d  |
+| **P1**   | Redis + rate limits      | Backend       | 2–3 d  |
+| **P1**   | Legal pages              | Product/Legal | 3–5 d  |
+| **P1**   | Load testing             | QA            | 2–3 d  |
+| **P2**   | Contest status cron      | Backend       | 1–2 d  |
+| **P2**   | Mentor assignment flow   | Product       | 1 wk   |
+| **P2**   | Analytics dashboard      | Product       | 2 wk   |
 
 ---
 
@@ -512,4 +520,4 @@ Run against staging after every deploy:
 
 ---
 
-*This document should be updated in `docs/TASKS.md` as production tasks are picked up.*
+_This document should be updated in `docs/TASKS.md` as production tasks are picked up._

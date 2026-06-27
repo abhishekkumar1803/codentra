@@ -1,6 +1,9 @@
 'use client';
 
-import { ServicesCatalog, ServicesPageHeader } from '@/features/services/components/services-catalog';
+import {
+  ServicesCatalog,
+  ServicesPageHeader,
+} from '@/features/services/components/services-catalog';
 
 export default function ServicesPage() {
   return (

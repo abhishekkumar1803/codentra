@@ -109,7 +109,13 @@ export class SystemDesignService {
         slug,
         deletedAt: null,
         type: ContestType.SYSTEM_DESIGN,
-        status: { in: [ContestStatus.SCHEDULED, ContestStatus.LIVE, ContestStatus.ENDED] },
+        status: {
+          in: [
+            ContestStatus.SCHEDULED,
+            ContestStatus.LIVE,
+            ContestStatus.ENDED,
+          ],
+        },
       },
     });
 

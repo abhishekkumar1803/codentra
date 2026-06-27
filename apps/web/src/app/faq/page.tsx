@@ -4,7 +4,8 @@ import { FaqSection } from '@/features/landing/components/faq-section';
 
 export const metadata = {
   title: 'FAQ — Codentra',
-  description: 'Frequently asked questions about Codentra membership and features.',
+  description:
+    'Frequently asked questions about Codentra membership and features.',
 };
 
 export default function FaqPage() {

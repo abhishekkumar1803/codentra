@@ -1,10 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  quizzesApi,
-  type SubmitQuizPayload,
-} from '../api/quizzes-api';
+import { quizzesApi, type SubmitQuizPayload } from '../api/quizzes-api';
 
 export function useQuizSession(slug: string, enabled = true) {
   return useQuery({

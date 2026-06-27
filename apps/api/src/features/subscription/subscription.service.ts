@@ -161,7 +161,10 @@ export class SubscriptionService {
       where: { id: subscription.userId },
     });
     if (user) {
-      void this.emailService.sendSubscriptionConfirmation(user.email, user.name);
+      void this.emailService.sendSubscriptionConfirmation(
+        user.email,
+        user.name,
+      );
     }
   }
 
@@ -173,15 +176,17 @@ export class SubscriptionService {
     const payload = event.payload;
 
     if (eventType === 'subscription.activated') {
-      const entity = (payload as { subscription?: { entity?: Record<string, string> } })
-        .subscription?.entity;
+      const entity = (
+        payload as { subscription?: { entity?: Record<string, string> } }
+      ).subscription?.entity;
       if (!entity?.id) return;
       const sub = await this.prisma.subscription.findFirst({
         where: { razorpaySubscriptionId: entity.id },
       });
       if (sub) {
-        const paymentEntity = (payload as { payment?: { entity?: Record<string, string> } })
-          .payment?.entity;
+        const paymentEntity = (
+          payload as { payment?: { entity?: Record<string, string> } }
+        ).payment?.entity;
         await this.activateSubscription(sub.id, {
           razorpayPaymentId: paymentEntity?.id ?? `pay_${Date.now()}`,
           amount: parseInt(paymentEntity?.amount ?? '4900', 10),
@@ -190,10 +195,12 @@ export class SubscriptionService {
     }
 
     if (eventType === 'subscription.charged') {
-      const paymentEntity = (payload as { payment?: { entity?: Record<string, string> } })
-        .payment?.entity;
-      const subEntity = (payload as { subscription?: { entity?: Record<string, string> } })
-        .subscription?.entity;
+      const paymentEntity = (
+        payload as { payment?: { entity?: Record<string, string> } }
+      ).payment?.entity;
+      const subEntity = (
+        payload as { subscription?: { entity?: Record<string, string> } }
+      ).subscription?.entity;
       if (!paymentEntity?.id || !subEntity?.id) return;
 
       const sub = await this.prisma.subscription.findFirst({
@@ -234,8 +241,9 @@ export class SubscriptionService {
     }
 
     if (eventType === 'subscription.cancelled') {
-      const entity = (payload as { subscription?: { entity?: Record<string, string> } })
-        .subscription?.entity;
+      const entity = (
+        payload as { subscription?: { entity?: Record<string, string> } }
+      ).subscription?.entity;
       if (!entity?.id) return;
       await this.prisma.subscription.updateMany({
         where: { razorpaySubscriptionId: entity.id },
@@ -247,8 +255,9 @@ export class SubscriptionService {
     }
 
     if (eventType === 'subscription.completed') {
-      const entity = (payload as { subscription?: { entity?: Record<string, string> } })
-        .subscription?.entity;
+      const entity = (
+        payload as { subscription?: { entity?: Record<string, string> } }
+      ).subscription?.entity;
       if (!entity?.id) return;
       await this.prisma.subscription.updateMany({
         where: { razorpaySubscriptionId: entity.id },
@@ -257,8 +266,9 @@ export class SubscriptionService {
     }
 
     if (eventType === 'payment.failed') {
-      const entity = (payload as { payment?: { entity?: Record<string, string> } })
-        .payment?.entity;
+      const entity = (
+        payload as { payment?: { entity?: Record<string, string> } }
+      ).payment?.entity;
       if (!entity?.id) return;
 
       const existing = await this.prisma.payment.findUnique({

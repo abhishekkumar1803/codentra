@@ -222,7 +222,11 @@ export function AdminContestForm({ contestId }: { contestId?: string }) {
               </div>
             </div>
             <Button type="submit" disabled={pending}>
-              {pending ? 'Saving...' : isEdit ? 'Save changes' : 'Create contest'}
+              {pending
+                ? 'Saving...'
+                : isEdit
+                  ? 'Save changes'
+                  : 'Create contest'}
             </Button>
           </form>
         </CardContent>

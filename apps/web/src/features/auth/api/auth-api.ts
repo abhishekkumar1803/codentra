@@ -7,11 +7,7 @@ function setToken(token: string | null) {
 }
 
 export const authApi = {
-  register: async (data: {
-    email: string;
-    password: string;
-    name: string;
-  }) => {
+  register: async (data: { email: string; password: string; name: string }) => {
     const res = await api.post<AuthResponse>('/auth/register', data);
     setToken(res.accessToken);
     return res;

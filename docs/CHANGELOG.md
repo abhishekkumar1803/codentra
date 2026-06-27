@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - **LeetCode-style contest judge** — Monaco editor, Judge0 CE (env-based `JUDGE0_API_URL`), local Docker stack at `infra/judge0`, BullMQ async submissions.
 - **Feedback polish** — Animated landing (scrolling code hero, scroll-reveal), auth session fix for navbar, contest leaderboard filter, Codentra rating tiers + history graphs on profile, problem solver improvements (starter-only code, hidden test cases, verdict details), admin problem/test-case manager for DSA/CP contests.
 - **Screenshot parity rebuild** — FAQ (/faq), pricing (/pricing), auth-aware marketing navbar/hero/CTA, full dashboard sidebar (Quizzes, Services, Mentor, Employer, Back to site).
@@ -52,19 +53,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **TASKS.md** — Task tracker with Phase 0–5 breakdown.
 
 ### Status
+
 - Phase 0 complete. Phase 1 complete (v0.1.0). Phase 2 complete (v0.2.0). Phase 3 complete (v0.3.0). Phase 4 core complete (v0.4.0 scope). Screenshot parity rebuild complete.
 
 ---
 
 ## Version Plan
 
-| Version | Phase | Target | Highlights |
-|---------|-------|--------|------------|
-| 0.1.0 | Phase 1 | Week 6 | Landing, Auth, Subscription, Dashboards |
-| 0.2.0 | Phase 2 | Week 12 | Contests, Quizzes, Leaderboards |
-| 0.3.0 | Phase 3 | Week 18 | Jobs, Referrals, System Design |
-| 0.4.0 | Phase 4 | Week 24 | Premium Services |
-| 1.0.0 | Phase 5 | Week 30+ | Production launch |
+| Version | Phase   | Target   | Highlights                              |
+| ------- | ------- | -------- | --------------------------------------- |
+| 0.1.0   | Phase 1 | Week 6   | Landing, Auth, Subscription, Dashboards |
+| 0.2.0   | Phase 2 | Week 12  | Contests, Quizzes, Leaderboards         |
+| 0.3.0   | Phase 3 | Week 18  | Jobs, Referrals, System Design          |
+| 0.4.0   | Phase 4 | Week 24  | Premium Services                        |
+| 1.0.0   | Phase 5 | Week 30+ | Production launch                       |
 
 ---
 
@@ -83,5 +85,6 @@ Use the following template for future releases:
 ## [0.0.0] — 2025-06-25
 
 ### Added
+
 - Initial project scaffolding with documentation structure.
 - Architecture planning documents (pre-implementation).

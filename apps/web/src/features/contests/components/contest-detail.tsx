@@ -90,8 +90,7 @@ export function ContestDetailView({ slug }: { slug: string }) {
   const isSubmitted = contest.registration?.status === 'SUBMITTED';
   const canTakeQuiz =
     isQuiz && contest.isRegistered && contest.status === 'LIVE' && !isSubmitted;
-  const canViewResults =
-    isQuiz && contest.isRegistered && isSubmitted;
+  const canViewResults = isQuiz && contest.isRegistered && isSubmitted;
   const canSubmitSystemDesign =
     isSystemDesign &&
     contest.isRegistered &&
@@ -123,7 +122,9 @@ export function ContestDetailView({ slug }: { slug: string }) {
               <ContestStatusBadge status={contest.status} />
               {contest.isRegistered && (
                 <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                  {isVirtualParticipant ? 'Virtual participant' : "You're registered"}
+                  {isVirtualParticipant
+                    ? 'Virtual participant'
+                    : "You're registered"}
                 </span>
               )}
             </div>
@@ -209,9 +210,7 @@ export function ContestDetailView({ slug }: { slug: string }) {
               </dt>
               <dd>
                 {contest.participantCount}
-                {contest.maxParticipants
-                  ? ` / ${contest.maxParticipants}`
-                  : ''}
+                {contest.maxParticipants ? ` / ${contest.maxParticipants}` : ''}
               </dd>
             </div>
             {contest.createdBy && (

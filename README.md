@@ -16,21 +16,21 @@ Our mission is to build a complete ecosystem where developers can learn, compete
 
 ### Community Membership (₹49/month)
 
-* 🏆 Weekly DSA Contests
-* ⚡ Competitive Programming Contests
-* 🏗️ System Design Challenges
-* 🧠 Technical Quizzes
-* 📊 Leaderboards & Rankings
-* 💼 Curated Job Openings
-* 🤝 Referral Board
-* 🎯 Community Challenges
+- 🏆 Weekly DSA Contests
+- ⚡ Competitive Programming Contests
+- 🏗️ System Design Challenges
+- 🧠 Technical Quizzes
+- 📊 Leaderboards & Rankings
+- 💼 Curated Job Openings
+- 🤝 Referral Board
+- 🎯 Community Challenges
 
 ### Premium Services
 
-* 📄 Resume Reviews
-* 🎤 Mock Interviews
-* 💬 Career Guidance Sessions
-* 🔗 LinkedIn Profile Reviews
+- 📄 Resume Reviews
+- 🎤 Mock Interviews
+- 💬 Career Guidance Sessions
+- 🔗 LinkedIn Profile Reviews
 
 ---
 
@@ -38,36 +38,36 @@ Our mission is to build a complete ecosystem where developers can learn, compete
 
 ### Frontend
 
-* Next.js 15
-* TypeScript
-* Tailwind CSS
-* Shadcn UI
-* React Query
-* Zustand
+- Next.js 15
+- TypeScript
+- Tailwind CSS
+- Shadcn UI
+- React Query
+- Zustand
 
 ### Backend
 
-* NestJS
-* Prisma ORM
-* PostgreSQL
+- NestJS
+- Prisma ORM
+- PostgreSQL
 
 ### Infrastructure
 
-* Turborepo
-* pnpm Workspaces
-* Docker
-* Vercel
-* Railway
-* Neon PostgreSQL
+- Turborepo
+- pnpm Workspaces
+- Docker
+- Vercel
+- Railway
+- Neon PostgreSQL
 
 ### Integrations
 
-* Razorpay
-* Google OAuth
-* Cloudinary
-* Resend
-* Judge0 CE (code execution)
-* BullMQ + Redis (async submissions)
+- Razorpay
+- Google OAuth
+- Cloudinary
+- Resend
+- Judge0 CE (code execution)
+- BullMQ + Redis (async submissions)
 
 ---
 
@@ -94,11 +94,11 @@ codentra/
 
 ## 🚧 Current Status
 
-* ✅ Phase 0 — Architecture & Planning
-* ✅ Phase 1 — Foundation (Landing, Auth, Subscription, Dashboards, Admin)
-* ✅ Phase 2 — Core Engagement (Contests, Quizzes, Leaderboards, Notifications)
-* ✅ Phase 3 — Career & Community (Jobs, Referrals, System Design)
-* 🚧 Phase 4 — Premium Services (next)
+- ✅ Phase 0 — Architecture & Planning
+- ✅ Phase 1 — Foundation (Landing, Auth, Subscription, Dashboards, Admin)
+- ✅ Phase 2 — Core Engagement (Contests, Quizzes, Leaderboards, Notifications)
+- ✅ Phase 3 — Career & Community (Jobs, Referrals, System Design)
+- 🚧 Phase 4 — Premium Services (next)
 
 ---
 
@@ -117,12 +117,12 @@ pnpm dev:clean                # start API (3001) + web (3000)
 
 ### Contest code execution (LeetCode-style)
 
-| Layer | Technology |
-|-------|------------|
-| Editor | Monaco (`@monaco-editor/react`) |
-| Run (sync) | Judge0 CE API |
-| Submit (async) | BullMQ → worker → Judge0 CE |
-| Storage | PostgreSQL (`code_submissions`, leaderboards) |
+| Layer          | Technology                                    |
+| -------------- | --------------------------------------------- |
+| Editor         | Monaco (`@monaco-editor/react`)               |
+| Run (sync)     | Judge0 CE API                                 |
+| Submit (async) | BullMQ → worker → Judge0 CE                   |
+| Storage        | PostgreSQL (`code_submissions`, leaderboards) |
 
 **Local Judge0 CE** (Docker, port `2358`):
 
@@ -151,53 +151,53 @@ See [docs/LOCAL_SETUP.md](docs/LOCAL_SETUP.md) for full setup.
 
 ### Phase 1
 
-* Landing Page
-* Authentication
-* Membership System
-* User Dashboard
-* Admin Dashboard
+- Landing Page
+- Authentication
+- Membership System
+- User Dashboard
+- Admin Dashboard
 
 ### Phase 2
 
-* DSA Contests
-* CP Contests
-* System Design Challenges
-* Tech Quizzes
-* Leaderboards
+- DSA Contests
+- CP Contests
+- System Design Challenges
+- Tech Quizzes
+- Leaderboards
 
 ### Phase 3
 
-* Jobs Board
-* Referral Board
-* Resume Reviews
-* Mock Interviews
-* Career Guidance
+- Jobs Board
+- Referral Board
+- Resume Reviews
+- Mock Interviews
+- Career Guidance
 
 ### Phase 4
 
-* Gamification
-* Achievements
-* XP System
-* Badges
+- Gamification
+- Achievements
+- XP System
+- Badges
 
 ### Phase 5
 
-* AI Features
-* Automated Contest Generation
-* Personalized Learning Paths
-* Analytics Dashboard
+- AI Features
+- Automated Contest Generation
+- Personalized Learning Paths
+- Analytics Dashboard
 
 ---
 
 ## 📌 Engineering Principles
 
-* Clean Architecture
-* SOLID Principles
-* Feature-Based Modules
-* Type Safety
-* Scalable Design
-* Performance First
-* Security by Default
+- Clean Architecture
+- SOLID Principles
+- Feature-Based Modules
+- Type Safety
+- Scalable Design
+- Performance First
+- Security by Default
 
 ---
 
@@ -212,4 +212,3 @@ Contributions, feature suggestions, and bug reports are always welcome.
 This project is currently private and under active development.
 
 © Codentra. All Rights Reserved.
-

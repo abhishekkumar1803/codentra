@@ -121,9 +121,7 @@ export function CheckoutCard() {
           className="w-full"
           size="lg"
           onClick={handleSubscribe}
-          disabled={
-            createSubscription.isPending || polling || isPending
-          }
+          disabled={createSubscription.isPending || polling || isPending}
         >
           {createSubscription.isPending || polling || isPending
             ? 'Processing...'

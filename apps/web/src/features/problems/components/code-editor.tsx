@@ -40,7 +40,8 @@ export function CodeEditor({
           readOnly,
           minimap: { enabled: false },
           fontSize: 14,
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+          fontFamily:
+            'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
           lineNumbers: 'on',
           scrollBeyondLastLine: false,
           automaticLayout: true,

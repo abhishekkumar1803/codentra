@@ -12,10 +12,7 @@ import {
 import { Role } from '@prisma/client';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import {
-  CreateProblemDto,
-  CreateTestCaseDto,
-} from './dto/problem.dto';
+import { CreateProblemDto, CreateTestCaseDto } from './dto/problem.dto';
 import { ProblemsService } from './problems.service';
 
 @Controller('admin/contests/:contestId/problems')

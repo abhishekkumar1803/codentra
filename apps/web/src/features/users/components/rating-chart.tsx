@@ -37,12 +37,9 @@ export function RatingChart({ title, type, currentRating, history }: Props) {
 
   const coords = ratings.map((rating, i) => {
     const x =
-      padding +
-      (i / Math.max(ratings.length - 1, 1)) * (width - padding * 2);
+      padding + (i / Math.max(ratings.length - 1, 1)) * (width - padding * 2);
     const y =
-      height -
-      padding -
-      ((rating - min) / range) * (height - padding * 2);
+      height - padding - ((rating - min) / range) * (height - padding * 2);
     return { x, y, rating };
   });
 
@@ -90,13 +87,7 @@ export function RatingChart({ title, type, currentRating, history }: Props) {
           />
         )}
         {coords.map((c, i) => (
-          <circle
-            key={i}
-            cx={c.x}
-            cy={c.y}
-            r="4"
-            fill={tier.color}
-          />
+          <circle key={i} cx={c.x} cy={c.y} r="4" fill={tier.color} />
         ))}
       </svg>
 

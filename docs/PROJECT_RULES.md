@@ -22,13 +22,13 @@ This document defines the engineering standards, conventions, and workflows for 
 
 ### 2.2 SOLID Principles
 
-| Principle | Application |
-|-----------|-------------|
+| Principle                 | Application                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------------------- |
 | **S**ingle Responsibility | One service per domain concern (e.g., `SubscriptionService`, not `UserService` handling payments) |
-| **O**pen/Closed | Extend via new modules/features, not by modifying shared core |
-| **L**iskov Substitution | Interface-based abstractions for external services (Razorpay, Resend, Cloudinary) |
-| **I**nterface Segregation | Small, focused DTOs and interfaces per use case |
-| **D**ependency Inversion | Inject dependencies via NestJS DI; mock in tests |
+| **O**pen/Closed           | Extend via new modules/features, not by modifying shared core                                     |
+| **L**iskov Substitution   | Interface-based abstractions for external services (Razorpay, Resend, Cloudinary)                 |
+| **I**nterface Segregation | Small, focused DTOs and interfaces per use case                                                   |
+| **D**ependency Inversion  | Inject dependencies via NestJS DI; mock in tests                                                  |
 
 ### 2.3 Feature-Based Architecture
 
@@ -55,36 +55,36 @@ Each feature is self-contained with its own components, hooks, API calls, types,
 
 ### 3.1 Frontend (Next.js 15)
 
-| Tool | Usage |
-|------|-------|
-| TypeScript | Strict mode enabled; no `any` without justification |
-| Tailwind CSS | Utility-first; use `cn()` helper for conditional classes |
-| Shadcn UI | Base component library; extend, don't fork |
-| React Query | All server state; no fetching in `useEffect` |
-| Zustand | Client-only UI state (modals, sidebar, theme) |
-| React Hook Form + Zod | All form validation |
+| Tool                  | Usage                                                    |
+| --------------------- | -------------------------------------------------------- |
+| TypeScript            | Strict mode enabled; no `any` without justification      |
+| Tailwind CSS          | Utility-first; use `cn()` helper for conditional classes |
+| Shadcn UI             | Base component library; extend, don't fork               |
+| React Query           | All server state; no fetching in `useEffect`             |
+| Zustand               | Client-only UI state (modals, sidebar, theme)            |
+| React Hook Form + Zod | All form validation                                      |
 
 ### 3.2 Backend (NestJS)
 
-| Tool | Usage |
-|------|-------|
-| TypeScript | Strict mode |
-| Prisma | ORM; migrations via `prisma migrate` |
-| class-validator | DTO validation |
-| class-transformer | Response serialization |
-| Passport + JWT | Authentication |
-| @nestjs/throttler | Rate limiting |
+| Tool              | Usage                                |
+| ----------------- | ------------------------------------ |
+| TypeScript        | Strict mode                          |
+| Prisma            | ORM; migrations via `prisma migrate` |
+| class-validator   | DTO validation                       |
+| class-transformer | Response serialization               |
+| Passport + JWT    | Authentication                       |
+| @nestjs/throttler | Rate limiting                        |
 
 ### 3.3 Infrastructure
 
-| Service | Purpose |
-|---------|---------|
-| Vercel | Frontend hosting |
-| Railway | Backend hosting |
-| Neon PostgreSQL | Database |
-| Razorpay | Payments |
-| Cloudinary | File storage |
-| Resend | Transactional email |
+| Service         | Purpose             |
+| --------------- | ------------------- |
+| Vercel          | Frontend hosting    |
+| Railway         | Backend hosting     |
+| Neon PostgreSQL | Database            |
+| Razorpay        | Payments            |
+| Cloudinary      | File storage        |
+| Resend          | Transactional email |
 
 ---
 
@@ -106,16 +106,16 @@ Every feature **must** include:
 
 ### 5.1 General
 
-| Item | Convention | Example |
-|------|------------|---------|
-| Files (frontend) | kebab-case | `subscription-card.tsx` |
-| Files (backend) | kebab-case | `subscription.service.ts` |
-| Components | PascalCase | `SubscriptionCard` |
-| Functions | camelCase | `getUserSubscription` |
-| Constants | SCREAMING_SNAKE | `MAX_RETRY_COUNT` |
-| Database tables | snake_case (Prisma @@map) | `contest_participants` |
-| API routes | kebab-case | `/api/v1/contest-participants` |
-| Environment vars | SCREAMING_SNAKE | `DATABASE_URL` |
+| Item             | Convention                | Example                        |
+| ---------------- | ------------------------- | ------------------------------ |
+| Files (frontend) | kebab-case                | `subscription-card.tsx`        |
+| Files (backend)  | kebab-case                | `subscription.service.ts`      |
+| Components       | PascalCase                | `SubscriptionCard`             |
+| Functions        | camelCase                 | `getUserSubscription`          |
+| Constants        | SCREAMING_SNAKE           | `MAX_RETRY_COUNT`              |
+| Database tables  | snake_case (Prisma @@map) | `contest_participants`         |
+| API routes       | kebab-case                | `/api/v1/contest-participants` |
+| Environment vars | SCREAMING_SNAKE           | `DATABASE_URL`                 |
 
 ### 5.2 NestJS Modules
 
@@ -182,18 +182,18 @@ app/
 
 ### 6.3 HTTP Status Codes
 
-| Code | Usage |
-|------|-------|
-| 200 | Success (GET, PATCH) |
-| 201 | Created (POST) |
-| 204 | No content (DELETE) |
-| 400 | Validation error |
-| 401 | Unauthenticated |
-| 403 | Unauthorized (wrong role) |
-| 404 | Not found |
-| 409 | Conflict (duplicate) |
-| 429 | Rate limited |
-| 500 | Internal server error |
+| Code | Usage                     |
+| ---- | ------------------------- |
+| 200  | Success (GET, PATCH)      |
+| 201  | Created (POST)            |
+| 204  | No content (DELETE)       |
+| 400  | Validation error          |
+| 401  | Unauthenticated           |
+| 403  | Unauthorized (wrong role) |
+| 404  | Not found                 |
+| 409  | Conflict (duplicate)      |
+| 429  | Rate limited              |
+| 500  | Internal server error     |
 
 ---
 
@@ -207,11 +207,11 @@ app/
 
 ### 7.2 Role-Based Access Control
 
-| Role | Permissions |
-|------|-------------|
-| `USER` | Dashboard, contests, jobs, referrals, own profile |
+| Role     | Permissions                                         |
+| -------- | --------------------------------------------------- |
+| `USER`   | Dashboard, contests, jobs, referrals, own profile   |
 | `MENTOR` | USER permissions + assigned premium service reviews |
-| `ADMIN` | Full platform management |
+| `ADMIN`  | Full platform management                            |
 
 ### 7.3 Guards
 
@@ -323,12 +323,12 @@ test(payment): add webhook idempotency tests
 
 ## 13. Testing Standards
 
-| Layer | Tool | Coverage Target |
-|-------|------|-----------------|
-| Backend unit | Jest | Services: 80%+ |
-| Backend e2e | Jest + Supertest | Critical flows |
-| Frontend unit | Vitest | Utils, hooks: 80%+ |
-| Frontend e2e | Playwright | Auth, subscription flows |
+| Layer         | Tool             | Coverage Target          |
+| ------------- | ---------------- | ------------------------ |
+| Backend unit  | Jest             | Services: 80%+           |
+| Backend e2e   | Jest + Supertest | Critical flows           |
+| Frontend unit | Vitest           | Utils, hooks: 80%+       |
+| Frontend e2e  | Playwright       | Auth, subscription flows |
 
 ### 13.1 Critical Test Flows
 
@@ -344,11 +344,11 @@ test(payment): add webhook idempotency tests
 
 ### 14.1 Environments
 
-| Environment | Frontend | Backend | Database |
-|-------------|----------|---------|----------|
-| Development | localhost:3000 | localhost:3001 | Local/Neon dev |
-| Staging | staging.codentra.com | api-staging.codentra.com | Neon staging |
-| Production | codentra.com | api.codentra.com | Neon production |
+| Environment | Frontend             | Backend                  | Database        |
+| ----------- | -------------------- | ------------------------ | --------------- |
+| Development | localhost:3000       | localhost:3001           | Local/Neon dev  |
+| Staging     | staging.codentra.com | api-staging.codentra.com | Neon staging    |
+| Production  | codentra.com         | api.codentra.com         | Neon production |
 
 ### 14.2 Environment Files
 
@@ -359,16 +359,16 @@ test(payment): add webhook idempotency tests
 
 ## 15. Documentation Maintenance
 
-| Document | Update When |
-|----------|-------------|
-| `PRD.md` | Scope or requirements change |
-| `DATABASE.md` | Schema changes |
-| `API_CONTRACT.md` | Endpoint changes |
-| `TASKS.md` | Task status changes |
-| `CHANGELOG.md` | Every shipped feature/fix |
-| `BACKEND_ARCHITECTURE.md` | Backend structure changes |
-| `FRONTEND_ARCHITECTURE.md` | Frontend structure changes |
-| `IMPLEMENTATION_PLAN.md` | Phase timeline changes |
+| Document                   | Update When                  |
+| -------------------------- | ---------------------------- |
+| `PRD.md`                   | Scope or requirements change |
+| `DATABASE.md`              | Schema changes               |
+| `API_CONTRACT.md`          | Endpoint changes             |
+| `TASKS.md`                 | Task status changes          |
+| `CHANGELOG.md`             | Every shipped feature/fix    |
+| `BACKEND_ARCHITECTURE.md`  | Backend structure changes    |
+| `FRONTEND_ARCHITECTURE.md` | Frontend structure changes   |
+| `IMPLEMENTATION_PLAN.md`   | Phase timeline changes       |
 
 ---
 

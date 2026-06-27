@@ -94,7 +94,10 @@ const JAVA_QUESTIONS: QuizQuestionSeed[] = [
     text: 'What is autoboxing in Java?',
     points: 10,
     options: [
-      { text: 'Automatic conversion of primitive to wrapper class', isCorrect: true },
+      {
+        text: 'Automatic conversion of primitive to wrapper class',
+        isCorrect: true,
+      },
       { text: 'Automatic memory cleanup', isCorrect: false },
       { text: 'Automatic exception handling', isCorrect: false },
       { text: 'Automatic interface implementation', isCorrect: false },
@@ -198,7 +201,10 @@ const REACT_QUESTIONS: QuizQuestionSeed[] = [
     points: 10,
     options: [
       { text: 'Memoizing expensive calculations', isCorrect: false },
-      { text: 'Preventing re-renders when props are unchanged', isCorrect: true },
+      {
+        text: 'Preventing re-renders when props are unchanged',
+        isCorrect: true,
+      },
       { text: 'Persisting state to localStorage', isCorrect: false },
       { text: 'Creating refs', isCorrect: false },
     ],
@@ -207,7 +213,10 @@ const REACT_QUESTIONS: QuizQuestionSeed[] = [
     text: 'In React 18+, automatic batching means…',
     points: 10,
     options: [
-      { text: 'Multiple setState calls may batch into one render', isCorrect: true },
+      {
+        text: 'Multiple setState calls may batch into one render',
+        isCorrect: true,
+      },
       { text: 'Components render twice always', isCorrect: false },
       { text: 'Effects run synchronously', isCorrect: false },
       { text: 'Keys are auto-generated', isCorrect: false },
@@ -260,7 +269,10 @@ const JAVASCRIPT_QUESTIONS: QuizQuestionSeed[] = [
     text: 'What is a closure?',
     points: 10,
     options: [
-      { text: 'A function with access to its outer lexical scope', isCorrect: true },
+      {
+        text: 'A function with access to its outer lexical scope',
+        isCorrect: true,
+      },
       { text: 'A closed TCP connection', isCorrect: false },
       { text: 'A private class field only', isCorrect: false },
       { text: 'A deprecated var feature', isCorrect: false },
@@ -320,7 +332,10 @@ const JAVASCRIPT_QUESTIONS: QuizQuestionSeed[] = [
     text: 'What does `use strict` enable?',
     points: 10,
     options: [
-      { text: 'Stricter parsing and error handling in JavaScript', isCorrect: true },
+      {
+        text: 'Stricter parsing and error handling in JavaScript',
+        isCorrect: true,
+      },
       { text: 'TypeScript compilation', isCorrect: false },
       { text: 'Automatic semicolon removal', isCorrect: false },
       { text: 'Private fields in objects', isCorrect: false },
@@ -374,7 +389,10 @@ const DEVOPS_QUESTIONS: QuizQuestionSeed[] = [
     points: 10,
     options: [
       { text: 'SSH and patch servers manually', isCorrect: false },
-      { text: 'Replace servers instead of modifying them in place', isCorrect: true },
+      {
+        text: 'Replace servers instead of modifying them in place',
+        isCorrect: true,
+      },
       { text: 'Store secrets in git', isCorrect: false },
       { text: 'Disable monitoring', isCorrect: false },
     ],
@@ -413,7 +431,10 @@ const DEVOPS_QUESTIONS: QuizQuestionSeed[] = [
     text: 'What is a rolling deployment?',
     points: 10,
     options: [
-      { text: 'Updating instances gradually with minimal downtime', isCorrect: true },
+      {
+        text: 'Updating instances gradually with minimal downtime',
+        isCorrect: true,
+      },
       { text: 'Deleting all pods at once', isCorrect: false },
       { text: 'Manual FTP upload', isCorrect: false },
       { text: 'Running tests locally only', isCorrect: false },

@@ -87,7 +87,9 @@ export class ProblemsService {
         isSample: true,
       }));
 
-    const hiddenTestCaseCount = allTestCases.filter((tc) => !tc.isSample).length;
+    const hiddenTestCaseCount = allTestCases.filter(
+      (tc) => !tc.isSample,
+    ).length;
 
     const requiresRegistration =
       contest.status === ContestStatus.LIVE ||
@@ -160,7 +162,9 @@ export class ProblemsService {
         }),
       );
 
-      const allPassed = results.every((r) => r.verdict === SubmissionVerdict.ACCEPTED);
+      const allPassed = results.every(
+        (r) => r.verdict === SubmissionVerdict.ACCEPTED,
+      );
       return {
         mode: 'samples' as const,
         verdict: allPassed
@@ -431,18 +435,16 @@ export class ProblemsService {
     return registration;
   }
 
-  private formatSubmission(
-    submission: {
-      id: string;
-      language: string;
-      sourceCode: string;
-      verdict: string;
-      score: number;
-      runtimeMs: number | null;
-      verdictDetails: unknown;
-      submittedAt: Date;
-    },
-  ) {
+  private formatSubmission(submission: {
+    id: string;
+    language: string;
+    sourceCode: string;
+    verdict: string;
+    score: number;
+    runtimeMs: number | null;
+    verdictDetails: unknown;
+    submittedAt: Date;
+  }) {
     const details = sanitizeVerdictDetails(
       submission.verdictDetails as VerdictDetails | null,
     );

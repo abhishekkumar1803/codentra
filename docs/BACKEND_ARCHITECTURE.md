@@ -280,14 +280,14 @@ export class SubscriptionsModule {}
 
 ### 4.2 Phase 1 Controllers
 
-| Controller | Route Prefix | Auth |
-|------------|-------------|------|
-| `AuthController` | `/auth` | Mixed |
-| `UsersController` | `/users` | JWT |
-| `SubscriptionsController` | `/subscriptions` | JWT |
-| `PaymentsController` | `/payments` | JWT |
-| `WebhooksController` | `/webhooks` | Signature |
-| `AdminController` | `/admin` | JWT + ADMIN |
+| Controller                | Route Prefix     | Auth        |
+| ------------------------- | ---------------- | ----------- |
+| `AuthController`          | `/auth`          | Mixed       |
+| `UsersController`         | `/users`         | JWT         |
+| `SubscriptionsController` | `/subscriptions` | JWT         |
+| `PaymentsController`      | `/payments`      | JWT         |
+| `WebhooksController`      | `/webhooks`      | Signature   |
+| `AdminController`         | `/admin`         | JWT + ADMIN |
 
 ### 4.3 Controller Example
 
@@ -328,17 +328,17 @@ export class SubscriptionsController {
 
 ### 5.2 Service Responsibilities
 
-| Service | Responsibility |
-|---------|---------------|
-| `AuthService` | Registration, login, token management, password reset |
-| `UsersService` | Profile CRUD, avatar upload |
-| `SubscriptionsService` | Create, verify, cancel subscriptions |
-| `PaymentsService` | Payment records, history |
-| `RazorpayService` | Razorpay API calls, webhook verification |
-| `AdminService` | Metrics, user management |
-| `ActivityLogsService` | Audit trail logging |
-| `ResendService` | Transactional emails |
-| `CloudinaryService` | File uploads |
+| Service                | Responsibility                                        |
+| ---------------------- | ----------------------------------------------------- |
+| `AuthService`          | Registration, login, token management, password reset |
+| `UsersService`         | Profile CRUD, avatar upload                           |
+| `SubscriptionsService` | Create, verify, cancel subscriptions                  |
+| `PaymentsService`      | Payment records, history                              |
+| `RazorpayService`      | Razorpay API calls, webhook verification              |
+| `AdminService`         | Metrics, user management                              |
+| `ActivityLogsService`  | Audit trail logging                                   |
+| `ResendService`        | Transactional emails                                  |
+| `CloudinaryService`    | File uploads                                          |
 
 ### 5.3 Service Example
 
@@ -515,8 +515,14 @@ Wraps all responses in standard envelope.
 
 ```typescript
 @Injectable()
-export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T>> {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<ApiResponse<T>> {
+export class TransformInterceptor<T> implements NestInterceptor<
+  T,
+  ApiResponse<T>
+> {
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Observable<ApiResponse<T>> {
     return next.handle().pipe(
       map((data) => ({
         success: true,
@@ -588,22 +594,24 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    const status = exception instanceof HttpException
-      ? exception.getStatus()
-      : 500;
+    const status =
+      exception instanceof HttpException ? exception.getStatus() : 500;
 
     const errorResponse = {
       success: false,
       error: {
-        code: exception instanceof BusinessException
-          ? exception.code
-          : 'INTERNAL_ERROR',
-        message: exception instanceof HttpException
-          ? exception.message
-          : 'Internal server error',
-        details: exception instanceof BadRequestException
-          ? exception.getResponse()
-          : [],
+        code:
+          exception instanceof BusinessException
+            ? exception.code
+            : 'INTERNAL_ERROR',
+        message:
+          exception instanceof HttpException
+            ? exception.message
+            : 'Internal server error',
+        details:
+          exception instanceof BadRequestException
+            ? exception.getResponse()
+            : [],
       },
     };
 
@@ -653,10 +661,10 @@ export class BusinessException extends HttpException {
 
 ### Token Configuration
 
-| Token | Expiry | Storage |
-|-------|--------|---------|
-| Access | 15 minutes | Memory / Authorization header |
-| Refresh | 7 days | httpOnly secure cookie |
+| Token   | Expiry     | Storage                       |
+| ------- | ---------- | ----------------------------- |
+| Access  | 15 minutes | Memory / Authorization header |
+| Refresh | 7 days     | httpOnly secure cookie        |
 
 ---
 
@@ -704,7 +712,10 @@ export class CloudinaryService {
 
 ```typescript
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+export class PrismaService
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
   async onModuleInit() {
     await this.$connect();
   }
@@ -730,7 +741,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 ThrottlerModule.forRoot([
   { name: 'default', ttl: 60000, limit: 100 },
   { name: 'auth', ttl: 60000, limit: 10 },
-])
+]);
 ```
 
 Apply stricter limits on auth endpoints:
@@ -754,11 +765,11 @@ async login(@Body() dto: LoginDto) { ... }
 
 ## 16. Testing Strategy
 
-| Type | Location | Tool |
-|------|----------|------|
-| Unit | `*.service.spec.ts` | Jest |
-| Integration | `test/*.e2e-spec.ts` | Jest + Supertest |
-| Coverage target | Services: 80%+ | |
+| Type            | Location             | Tool             |
+| --------------- | -------------------- | ---------------- |
+| Unit            | `*.service.spec.ts`  | Jest             |
+| Integration     | `test/*.e2e-spec.ts` | Jest + Supertest |
+| Coverage target | Services: 80%+       |                  |
 
 ### Test Database
 
@@ -828,11 +839,11 @@ Railway health check: `GET /api/v1/health`
 
 ## 20. Scaling Path
 
-| Users | Action |
-|-------|--------|
-| 0–1k | Single Railway instance |
-| 1k–10k | Scale Railway instances (2–3) |
-| 10k–50k | Neon read replicas; Redis cache |
+| Users    | Action                                                |
+| -------- | ----------------------------------------------------- |
+| 0–1k     | Single Railway instance                               |
+| 1k–10k   | Scale Railway instances (2–3)                         |
+| 10k–50k  | Neon read replicas; Redis cache                       |
 | 50k–100k | Consider service extraction (payments, notifications) |
 
 Current architecture supports scaling to 100k users without rewrite.

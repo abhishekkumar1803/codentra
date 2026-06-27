@@ -23,7 +23,10 @@ type RazorpaySuccessResponse = {
 
 type RazorpayInstance = {
   open: () => void;
-  on: (event: string, handler: (response: { error: { description: string } }) => void) => void;
+  on: (
+    event: string,
+    handler: (response: { error: { description: string } }) => void,
+  ) => void;
 };
 
 export type { RazorpayOptions, RazorpaySuccessResponse };

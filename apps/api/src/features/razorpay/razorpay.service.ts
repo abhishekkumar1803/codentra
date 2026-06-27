@@ -24,9 +24,7 @@ export class RazorpayService {
   }
 
   isMockMode(): boolean {
-    return (
-      this.config.get('RAZORPAY_MOCK', 'false') === 'true' || !this.client
-    );
+    return this.config.get('RAZORPAY_MOCK', 'false') === 'true' || !this.client;
   }
 
   getKeyId(): string {
@@ -70,9 +68,7 @@ export class RazorpayService {
     const secret = this.config.get<string>('RAZORPAY_WEBHOOK_SECRET');
     if (!secret || this.isMockMode()) return true;
 
-    const expected = createHmac('sha256', secret)
-      .update(body)
-      .digest('hex');
+    const expected = createHmac('sha256', secret).update(body).digest('hex');
     return expected === signature;
   }
 }

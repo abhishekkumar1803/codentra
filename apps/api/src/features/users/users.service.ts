@@ -6,10 +6,7 @@ import {
 import { RatingType, type User } from '@prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import { BusinessException } from '../../common/exceptions/business.exception';
-import {
-  comparePassword,
-  hashPassword,
-} from '../../common/utils/hash.util';
+import { comparePassword, hashPassword } from '../../common/utils/hash.util';
 import { getRatingTitle } from '../../common/utils/rating.util';
 import { CloudinaryService } from '../../infrastructure/cloudinary/cloudinary.service';
 import type { ChangePasswordDto, UpdateProfileDto } from './dto/users.dto';
@@ -24,20 +21,20 @@ export class UsersService {
   async getStats(userId: string) {
     const [user, contestsJoined, quizzesCompleted, globalRank] =
       await Promise.all([
-      this.prisma.user.findUnique({
-        where: { id: userId },
-        include: { subscription: true, profile: true },
-      }),
-      this.prisma.contestParticipant.count({ where: { userId } }),
-      this.prisma.contestParticipant.count({
-        where: {
-          userId,
-          status: 'SUBMITTED',
-          contest: { type: 'QUIZ' },
-        },
-      }),
-      this.getGlobalRank(userId),
-    ]);
+        this.prisma.user.findUnique({
+          where: { id: userId },
+          include: { subscription: true, profile: true },
+        }),
+        this.prisma.contestParticipant.count({ where: { userId } }),
+        this.prisma.contestParticipant.count({
+          where: {
+            userId,
+            status: 'SUBMITTED',
+            contest: { type: 'QUIZ' },
+          },
+        }),
+        this.getGlobalRank(userId),
+      ]);
 
     const dsaRating = user?.profile?.dsaRating ?? 1200;
     const cpRating = user?.profile?.cpRating ?? 1200;
@@ -138,8 +135,16 @@ export class UsersService {
   }
 
   async updateProfile(userId: string, dto: UpdateProfileDto) {
-    const { name, avatarUrl, bio, skills, githubUrl, linkedinUrl, twitterUrl, websiteUrl } =
-      dto;
+    const {
+      name,
+      avatarUrl,
+      bio,
+      skills,
+      githubUrl,
+      linkedinUrl,
+      twitterUrl,
+      websiteUrl,
+    } = dto;
 
     await this.prisma.user.update({
       where: { id: userId },

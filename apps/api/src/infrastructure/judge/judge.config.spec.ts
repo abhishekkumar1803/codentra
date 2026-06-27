@@ -1,11 +1,10 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
 import { resolveJudge0Settings } from './judge.config';
 
 describe('resolveJudge0Settings', () => {
   const mockConfig = (values: Record<string, string | undefined>) =>
     ({
-      get: (key: string, defaultValue?: string) =>
-        values[key] ?? defaultValue,
+      get: (key: string, defaultValue?: string) => values[key] ?? defaultValue,
     }) as ConfigService;
 
   it('defaults to mock when JUDGE_PROVIDER is unset and no URL', () => {

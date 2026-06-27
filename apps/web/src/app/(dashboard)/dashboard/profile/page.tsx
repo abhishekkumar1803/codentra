@@ -74,7 +74,10 @@ export default function ProfilePage() {
       name: data.name,
       bio: data.bio || undefined,
       skills: data.skills
-        ? data.skills.split(',').map((s) => s.trim()).filter(Boolean)
+        ? data.skills
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
         : [],
       githubUrl: data.githubUrl || undefined,
       linkedinUrl: data.linkedinUrl || undefined,

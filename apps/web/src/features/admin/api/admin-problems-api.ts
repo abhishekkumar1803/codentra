@@ -19,9 +19,7 @@ export type AdminProblem = {
 
 export const adminProblemsApi = {
   list: (contestId: string) =>
-    api.get<{ items: AdminProblem[] }>(
-      `/admin/contests/${contestId}/problems`,
-    ),
+    api.get<{ items: AdminProblem[] }>(`/admin/contests/${contestId}/problems`),
 
   create: (
     contestId: string,
@@ -48,11 +46,7 @@ export const adminProblemsApi = {
   deleteProblem: (contestId: string, problemId: string) =>
     api.delete(`/admin/contests/${contestId}/problems/${problemId}`),
 
-  deleteTestCase: (
-    contestId: string,
-    problemId: string,
-    testCaseId: string,
-  ) =>
+  deleteTestCase: (contestId: string, problemId: string, testCaseId: string) =>
     api.delete(
       `/admin/contests/${contestId}/problems/${problemId}/test-cases/${testCaseId}`,
     ),

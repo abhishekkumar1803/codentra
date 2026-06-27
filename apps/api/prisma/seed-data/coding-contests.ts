@@ -124,7 +124,9 @@ async function seedCodingContestBatch(
       slug,
       title: `${label} Round #${n}`,
       description: `${label} contest round ${n} with ${problemCount} coding problems. ${
-        isEnded ? 'Ended — virtual join available for practice.' : 'Live now — register to compete.'
+        isEnded
+          ? 'Ended — virtual join available for practice.'
+          : 'Live now — register to compete.'
       }`,
       status: isEnded ? ContestStatus.ENDED : ContestStatus.LIVE,
       startTime,

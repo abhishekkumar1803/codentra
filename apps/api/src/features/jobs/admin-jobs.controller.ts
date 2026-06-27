@@ -15,11 +15,7 @@ import { Role, type User } from '@prisma/client';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import {
-  CreateJobDto,
-  ListJobsQueryDto,
-  UpdateJobDto,
-} from './dto/job.dto';
+import { CreateJobDto, ListJobsQueryDto, UpdateJobDto } from './dto/job.dto';
 import { JobsService } from './jobs.service';
 
 @Controller('admin/jobs')

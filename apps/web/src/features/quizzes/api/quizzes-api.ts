@@ -6,8 +6,7 @@ export type SubmitQuizPayload = {
 };
 
 export const quizzesApi = {
-  getSession: (slug: string) =>
-    api.get<QuizSession>(`/contests/${slug}/quiz`),
+  getSession: (slug: string) => api.get<QuizSession>(`/contests/${slug}/quiz`),
 
   submit: (contestId: string, payload: SubmitQuizPayload) =>
     api.post<QuizResult>(`/contests/${contestId}/quiz/submit`, payload),

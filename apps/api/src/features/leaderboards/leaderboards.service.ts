@@ -1,8 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import {
-  LeaderboardPeriod,
-  ParticipantStatus,
-} from '@prisma/client';
+import { LeaderboardPeriod, ParticipantStatus } from '@prisma/client';
 import { PrismaService } from '../../common/database/prisma.service';
 import type { ListLeaderboardQueryDto } from './dto/leaderboard.dto';
 

@@ -1,9 +1,6 @@
 import Link from 'next/link';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@codentra/ui';
-import {
-  MEMBERSHIP_FEATURES,
-  PREMIUM_SERVICES,
-} from '../constants/features';
+import { MEMBERSHIP_FEATURES, PREMIUM_SERVICES } from '../constants/features';
 
 export function PricingSection() {
   return (

@@ -24,9 +24,21 @@ export class JobsService {
       ...(query.search
         ? {
             OR: [
-              { title: { contains: query.search, mode: 'insensitive' as const } },
-              { company: { contains: query.search, mode: 'insensitive' as const } },
-              { description: { contains: query.search, mode: 'insensitive' as const } },
+              {
+                title: { contains: query.search, mode: 'insensitive' as const },
+              },
+              {
+                company: {
+                  contains: query.search,
+                  mode: 'insensitive' as const,
+                },
+              },
+              {
+                description: {
+                  contains: query.search,
+                  mode: 'insensitive' as const,
+                },
+              },
             ],
           }
         : {}),
@@ -70,8 +82,15 @@ export class JobsService {
       ...(query.search
         ? {
             OR: [
-              { title: { contains: query.search, mode: 'insensitive' as const } },
-              { company: { contains: query.search, mode: 'insensitive' as const } },
+              {
+                title: { contains: query.search, mode: 'insensitive' as const },
+              },
+              {
+                company: {
+                  contains: query.search,
+                  mode: 'insensitive' as const,
+                },
+              },
             ],
           }
         : {}),
@@ -125,7 +144,9 @@ export class JobsService {
       data: {
         ...(dto.title !== undefined ? { title: dto.title } : {}),
         ...(dto.company !== undefined ? { company: dto.company } : {}),
-        ...(dto.description !== undefined ? { description: dto.description } : {}),
+        ...(dto.description !== undefined
+          ? { description: dto.description }
+          : {}),
         ...(dto.location !== undefined ? { location: dto.location } : {}),
         ...(dto.jobType !== undefined ? { jobType: dto.jobType } : {}),
         ...(dto.salaryMin !== undefined ? { salaryMin: dto.salaryMin } : {}),

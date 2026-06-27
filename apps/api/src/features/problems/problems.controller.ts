@@ -1,4 +1,14 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import type { User } from '@prisma/client';
 import { RequireSubscription } from '../../common/decorators/require-subscription.decorator';
@@ -70,12 +80,7 @@ export class ProblemsController {
     @CurrentUser() user: User,
     @Body() dto: RunCodeDto,
   ) {
-    return this.problemsService.runCode(
-      contestSlug,
-      problemSlug,
-      user.id,
-      dto,
-    );
+    return this.problemsService.runCode(contestSlug, problemSlug, user.id, dto);
   }
 
   @Post(':problemSlug/submit')
@@ -87,11 +92,6 @@ export class ProblemsController {
     @CurrentUser() user: User,
     @Body() dto: SubmitCodeDto,
   ) {
-    return this.problemsService.submitCode(
-      contestSlug,
-      problemSlug,
-      user,
-      dto,
-    );
+    return this.problemsService.submitCode(contestSlug, problemSlug, user, dto);
   }
 }

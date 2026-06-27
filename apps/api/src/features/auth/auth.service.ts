@@ -331,7 +331,9 @@ export class AuthService {
   }
 
   private sanitizeUser(
-    user: User & { subscription?: { status: string; currentPeriodEnd: Date } | null },
+    user: User & {
+      subscription?: { status: string; currentPeriodEnd: Date } | null;
+    },
   ) {
     return {
       id: user.id,

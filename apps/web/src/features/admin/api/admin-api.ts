@@ -33,12 +33,14 @@ export const adminApi = {
 
   getUser: (id: string) => api.get<AdminUserDetail>(`/admin/users/${id}`),
 
-  updateUser: (
-    id: string,
-    payload: { role?: string; isActive?: boolean },
-  ) => api.patch<AdminUserListItem>(`/admin/users/${id}`, payload),
+  updateUser: (id: string, payload: { role?: string; isActive?: boolean }) =>
+    api.patch<AdminUserListItem>(`/admin/users/${id}`, payload),
 
-  listSubscriptions: (params?: { page?: number; limit?: number; status?: string }) => {
+  listSubscriptions: (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+  }) => {
     const search = new URLSearchParams();
     if (params?.page) search.set('page', String(params.page));
     if (params?.limit) search.set('limit', String(params.limit));

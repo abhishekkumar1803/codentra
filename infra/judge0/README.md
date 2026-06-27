@@ -19,12 +19,12 @@ JUDGE0_API_URL=http://localhost:2358
 
 ## Services
 
-| Container | Role |
-|-----------|------|
-| `codentra-judge0-server` | HTTP API on port **2358** |
+| Container                 | Role                                 |
+| ------------------------- | ------------------------------------ |
+| `codentra-judge0-server`  | HTTP API on port **2358**            |
 | `codentra-judge0-workers` | Submission workers (isolate sandbox) |
-| `codentra-judge0-db` | Judge0 metadata (Postgres) |
-| `codentra-judge0-redis` | Judge0 job queue |
+| `codentra-judge0-db`      | Judge0 metadata (Postgres)           |
+| `codentra-judge0-redis`   | Judge0 job queue                     |
 
 These are **separate** from Codentra's Postgres/Redis in the root `docker-compose.yml`.
 

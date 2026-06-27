@@ -12,7 +12,9 @@ export default function AdminActivityLogsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Activity logs</h1>
-        <p className="mt-1 text-muted-foreground">Audit trail of platform events.</p>
+        <p className="mt-1 text-muted-foreground">
+          Audit trail of platform events.
+        </p>
       </div>
 
       <div className="flex flex-wrap gap-2">

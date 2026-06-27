@@ -47,11 +47,12 @@ export const referralsApi = {
   create: (payload: CreateReferralPayload) =>
     api.post<ReferralListItem>('/referrals', payload),
 
-  update: (id: string, payload: Partial<CreateReferralPayload & { status: string }>) =>
-    api.patch<ReferralListItem>(`/referrals/${id}`, payload),
+  update: (
+    id: string,
+    payload: Partial<CreateReferralPayload & { status: string }>,
+  ) => api.patch<ReferralListItem>(`/referrals/${id}`, payload),
 
-  close: (id: string) =>
-    api.delete<{ message: string }>(`/referrals/${id}`),
+  close: (id: string) => api.delete<{ message: string }>(`/referrals/${id}`),
 
   expressInterest: (id: string, message?: string) =>
     api.post<{

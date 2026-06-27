@@ -15,7 +15,11 @@ const navItems = [
   { href: '/services', label: 'Services', icon: '⭐' },
   { href: '/dashboard/profile', label: 'Profile', icon: '👤' },
   { href: '/dashboard/settings', label: 'Settings', icon: '⚙️' },
-  { href: '/dashboard/settings/subscription', label: 'Subscription', icon: '💳' },
+  {
+    href: '/dashboard/settings/subscription',
+    label: 'Subscription',
+    icon: '💳',
+  },
 ];
 
 const roleNavItems = {
@@ -81,11 +85,9 @@ export function DashboardSidebar({
               (item.href === '/jobs' && pathname.startsWith('/jobs')) ||
               (item.href === '/referrals' &&
                 pathname.startsWith('/referrals')) ||
-              (item.href === '/services' &&
-                pathname.startsWith('/services')) ||
+              (item.href === '/services' && pathname.startsWith('/services')) ||
               (item.href === '/mentor' && pathname.startsWith('/mentor')) ||
-              (item.href === '/employer' &&
-                pathname.startsWith('/employer')) ||
+              (item.href === '/employer' && pathname.startsWith('/employer')) ||
               (item.href === '/admin' && pathname.startsWith('/admin')) ||
               (item.href !== '/dashboard' &&
                 item.href !== '/contests' &&

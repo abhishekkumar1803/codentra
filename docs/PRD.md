@@ -35,13 +35,13 @@ Codentra unifies these into one platform with measurable growth tracking.
 
 ### 3.1 Business Goals
 
-| Goal | Target (12 months) |
-|------|-------------------|
-| Registered users | 10,000 |
-| Paying subscribers | 2,000 |
-| Monthly recurring revenue | ₹98,000+ |
-| Premium service bookings/month | 200 |
-| Contest participation rate | 40% of active subscribers |
+| Goal                           | Target (12 months)        |
+| ------------------------------ | ------------------------- |
+| Registered users               | 10,000                    |
+| Paying subscribers             | 2,000                     |
+| Monthly recurring revenue      | ₹98,000+                  |
+| Premium service bookings/month | 200                       |
+| Contest participation rate     | 40% of active subscribers |
 
 ### 3.2 Product Goals
 
@@ -93,36 +93,36 @@ Codentra unifies these into one platform with measurable growth tracking.
 
 Includes access to:
 
-| Feature | Description | Phase |
-|---------|-------------|-------|
-| DSA Contests | Timed algorithmic challenges with auto-grading | 2 |
-| CP Contests | Competitive programming with rating system | 2 |
-| System Design Challenges | Architecture problems with peer/expert review | 3 |
-| Tech Quizzes | MCQ-based assessments by topic | 2 |
-| Jobs Board | Curated job listings | 3 |
-| Referral Board | Community referral requests and offers | 3 |
-| Leaderboards | Global, weekly, and contest-specific rankings | 2 |
+| Feature                  | Description                                    | Phase |
+| ------------------------ | ---------------------------------------------- | ----- |
+| DSA Contests             | Timed algorithmic challenges with auto-grading | 2     |
+| CP Contests              | Competitive programming with rating system     | 2     |
+| System Design Challenges | Architecture problems with peer/expert review  | 3     |
+| Tech Quizzes             | MCQ-based assessments by topic                 | 2     |
+| Jobs Board               | Curated job listings                           | 3     |
+| Referral Board           | Community referral requests and offers         | 3     |
+| Leaderboards             | Global, weekly, and contest-specific rankings  | 2     |
 
 ### 5.2 Premium Services (À la carte)
 
-| Service | Description | Phase |
-|---------|-------------|-------|
-| Resume Review | Expert feedback on resume (async) | 4 |
-| Mock Interview | 45–60 min live session with mentor | 4 |
-| Career Guidance Call | 30 min career strategy session | 4 |
-| LinkedIn Review | Profile optimization feedback | 4 |
+| Service              | Description                        | Phase |
+| -------------------- | ---------------------------------- | ----- |
+| Resume Review        | Expert feedback on resume (async)  | 4     |
+| Mock Interview       | 45–60 min live session with mentor | 4     |
+| Career Guidance Call | 30 min career strategy session     | 4     |
+| LinkedIn Review      | Profile optimization feedback      | 4     |
 
 ### 5.3 Platform Features (All Phases)
 
-| Feature | Description | Phase |
-|---------|-------------|-------|
-| Landing Page | Marketing site with pricing, features, CTA | 1 |
-| Authentication | Google OAuth + Email/Password | 1 |
-| Membership Subscription | Razorpay recurring billing | 1 |
-| User Dashboard | Personal hub: subscription, activity, quick links | 1 |
-| Admin Dashboard | User management, analytics, content moderation | 1 |
-| Notifications | In-app + email notifications | 2 |
-| Activity Logs | Audit trail for user and admin actions | 1 |
+| Feature                 | Description                                       | Phase |
+| ----------------------- | ------------------------------------------------- | ----- |
+| Landing Page            | Marketing site with pricing, features, CTA        | 1     |
+| Authentication          | Google OAuth + Email/Password                     | 1     |
+| Membership Subscription | Razorpay recurring billing                        | 1     |
+| User Dashboard          | Personal hub: subscription, activity, quick links | 1     |
+| Admin Dashboard         | User management, analytics, content moderation    | 1     |
+| Notifications           | In-app + email notifications                      | 2     |
+| Activity Logs           | Audit trail for user and admin actions            | 1     |
 
 ---
 
@@ -131,28 +131,33 @@ Includes access to:
 ### 6.1 Phase 1 — Foundation
 
 #### Landing Page
+
 - As a visitor, I want to understand what Codentra offers so I can decide to sign up.
 - As a visitor, I want to see pricing (₹49/month) and feature list clearly.
 - As a visitor, I want a responsive experience on mobile and desktop.
 
 #### Authentication
+
 - As a user, I want to sign up/login with Google so I can onboard quickly.
 - As a user, I want to sign up/login with email and password as an alternative.
 - As a user, I want to reset my password via email.
 - As a user, I want my session to persist securely across visits.
 
 #### Membership Subscription
+
 - As a user, I want to subscribe for ₹49/month via Razorpay.
 - As a user, I want to see my subscription status (active, expired, cancelled).
 - As a user, I want to cancel my subscription without contacting support.
 - As a user, I want email confirmation on successful payment.
 
 #### User Dashboard
+
 - As a subscriber, I want a dashboard showing my profile, subscription, and recent activity.
 - As a subscriber, I want quick navigation to upcoming features (contests, jobs).
 - As a non-subscriber, I want a clear CTA to subscribe.
 
 #### Admin Dashboard
+
 - As an admin, I want to view total users, subscribers, and revenue metrics.
 - As an admin, I want to search, view, and manage user accounts.
 - As an admin, I want to view payment and subscription history.
@@ -261,25 +266,25 @@ See `BACKEND_ARCHITECTURE.md`, `FRONTEND_ARCHITECTURE.md`, and `DATABASE.md` for
 
 ## 10. Risks & Mitigations
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Razorpay integration complexity | High | Early spike; webhook idempotency; sandbox testing |
-| Low initial contest content | Medium | Seed contests before launch; admin tools in Phase 2 |
-| Subscription churn | High | Onboarding emails; engagement features in Phase 2 |
-| Database scaling | Medium | Neon autoscaling; read replicas at 10k+ users |
-| Security breach | Critical | OWASP best practices; regular dependency audits |
+| Risk                            | Impact   | Mitigation                                          |
+| ------------------------------- | -------- | --------------------------------------------------- |
+| Razorpay integration complexity | High     | Early spike; webhook idempotency; sandbox testing   |
+| Low initial contest content     | Medium   | Seed contests before launch; admin tools in Phase 2 |
+| Subscription churn              | High     | Onboarding emails; engagement features in Phase 2   |
+| Database scaling                | Medium   | Neon autoscaling; read replicas at 10k+ users       |
+| Security breach                 | Critical | OWASP best practices; regular dependency audits     |
 
 ---
 
 ## 11. Release Plan
 
-| Phase | Timeline | Deliverables |
-|-------|----------|--------------|
-| Phase 1 | Weeks 1–6 | Landing, Auth, Subscription, Dashboards |
-| Phase 2 | Weeks 7–12 | Contests, Quizzes, Leaderboards, Notifications |
-| Phase 3 | Weeks 13–18 | Jobs, Referrals, System Design |
-| Phase 4 | Weeks 19–24 | Premium Services |
-| Phase 5 | Weeks 25+ | Scale, Analytics, Mentor Portal |
+| Phase   | Timeline    | Deliverables                                   |
+| ------- | ----------- | ---------------------------------------------- |
+| Phase 1 | Weeks 1–6   | Landing, Auth, Subscription, Dashboards        |
+| Phase 2 | Weeks 7–12  | Contests, Quizzes, Leaderboards, Notifications |
+| Phase 3 | Weeks 13–18 | Jobs, Referrals, System Design                 |
+| Phase 4 | Weeks 19–24 | Premium Services                               |
+| Phase 5 | Weeks 25+   | Scale, Analytics, Mentor Portal                |
 
 See `IMPLEMENTATION_PLAN.md` for detailed breakdown.
 

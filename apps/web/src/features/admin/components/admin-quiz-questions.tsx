@@ -80,10 +80,7 @@ export function AdminQuizQuestions({ contestId }: { contestId: string }) {
         ) : (
           <ul className="space-y-3">
             {data?.items.map((q, qi) => (
-              <li
-                key={q.id}
-                className="rounded-md border p-3 text-sm"
-              >
+              <li key={q.id} className="rounded-md border p-3 text-sm">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="font-medium">

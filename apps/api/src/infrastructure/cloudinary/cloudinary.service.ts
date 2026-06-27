@@ -13,10 +13,7 @@ export class CloudinaryService {
     );
   }
 
-  async uploadImage(
-    buffer: Buffer,
-    folder = 'avatars',
-  ): Promise<string> {
+  async uploadImage(buffer: Buffer, folder = 'avatars'): Promise<string> {
     if (!this.isConfigured()) {
       return `https://api.dicebear.com/7.x/initials/svg?seed=${Date.now()}`;
     }

@@ -73,9 +73,7 @@ export function QuizResultsView({ slug }: { slug: string }) {
         >
           ← Back to contest
         </Link>
-        <h1 className="mt-4 text-2xl font-bold tracking-tight">
-          Quiz results
-        </h1>
+        <h1 className="mt-4 text-2xl font-bold tracking-tight">Quiz results</h1>
         <p className="mt-1 text-muted-foreground">{results.title}</p>
       </div>
 

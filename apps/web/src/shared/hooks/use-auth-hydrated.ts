@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '../stores/auth-store';
 
 export function useAuthHydrated() {
-  const [hydrated, setHydrated] = useState(
-    () => useAuthStore.persist.hasHydrated(),
+  const [hydrated, setHydrated] = useState(() =>
+    useAuthStore.persist.hasHydrated(),
   );
 
   useEffect(() => {

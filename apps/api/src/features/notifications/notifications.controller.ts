@@ -18,10 +18,7 @@ export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @Get()
-  list(
-    @CurrentUser() user: User,
-    @Query() query: ListNotificationsQueryDto,
-  ) {
+  list(@CurrentUser() user: User, @Query() query: ListNotificationsQueryDto) {
     return this.notificationsService.list(user.id, query);
   }
 

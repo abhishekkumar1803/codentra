@@ -11,6 +11,7 @@
 ### 1.1 Authentication
 
 Protected endpoints require:
+
 ```
 Authorization: Bearer <access_token>
 ```
@@ -20,24 +21,24 @@ Refresh token sent via httpOnly cookie: `refresh_token`
 ### 1.2 Response Envelope
 
 **Success:**
+
 ```json
 {
   "success": true,
-  "data": { },
+  "data": {},
   "meta": { "page": 1, "limit": 20, "total": 100 }
 }
 ```
 
 **Error:**
+
 ```json
 {
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
     "message": "Invalid input",
-    "details": [
-      { "field": "email", "message": "Email is required" }
-    ]
+    "details": [{ "field": "email", "message": "Email is required" }]
   }
 }
 ```
@@ -48,16 +49,16 @@ Query params: `?page=1&limit=20&sort=createdAt&order=desc`
 
 ### 1.4 Error Codes
 
-| Code | HTTP | Description |
-|------|------|-------------|
-| `VALIDATION_ERROR` | 400 | Invalid request body/params |
-| `UNAUTHORIZED` | 401 | Missing or invalid token |
-| `FORBIDDEN` | 403 | Insufficient permissions |
-| `NOT_FOUND` | 404 | Resource not found |
-| `CONFLICT` | 409 | Duplicate resource |
-| `SUBSCRIPTION_REQUIRED` | 403 | Active subscription required |
-| `RATE_LIMITED` | 429 | Too many requests |
-| `INTERNAL_ERROR` | 500 | Server error |
+| Code                    | HTTP | Description                  |
+| ----------------------- | ---- | ---------------------------- |
+| `VALIDATION_ERROR`      | 400  | Invalid request body/params  |
+| `UNAUTHORIZED`          | 401  | Missing or invalid token     |
+| `FORBIDDEN`             | 403  | Insufficient permissions     |
+| `NOT_FOUND`             | 404  | Resource not found           |
+| `CONFLICT`              | 409  | Duplicate resource           |
+| `SUBSCRIPTION_REQUIRED` | 403  | Active subscription required |
+| `RATE_LIMITED`          | 429  | Too many requests            |
+| `INTERNAL_ERROR`        | 500  | Server error                 |
 
 ---
 
@@ -68,6 +69,7 @@ Query params: `?page=1&limit=20&sort=createdAt&order=desc`
 Public health check.
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -91,6 +93,7 @@ Register with email and password.
 **Rate limit:** 5/min per IP
 
 **Request:**
+
 ```json
 {
   "email": "user@example.com",
@@ -100,11 +103,13 @@ Register with email and password.
 ```
 
 **Validation:**
+
 - `email`: valid email, max 255
 - `password`: min 8 chars, 1 uppercase, 1 number, 1 special
 - `name`: min 2, max 255
 
 **Response 201:**
+
 ```json
 {
   "success": true,
@@ -134,6 +139,7 @@ Login with email and password.
 **Rate limit:** 10/min per IP
 
 **Request:**
+
 ```json
 {
   "email": "user@example.com",
@@ -142,6 +148,7 @@ Login with email and password.
 ```
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -166,6 +173,7 @@ Google OAuth login/register.
 **Auth:** Public
 
 **Request:**
+
 ```json
 {
   "code": "google_auth_code",
@@ -184,6 +192,7 @@ Refresh access token.
 **Auth:** Refresh token cookie
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -216,6 +225,7 @@ Request password reset email.
 **Rate limit:** 3/hour per email
 
 **Request:**
+
 ```json
 {
   "email": "user@example.com"
@@ -223,6 +233,7 @@ Request password reset email.
 ```
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -239,6 +250,7 @@ Reset password with token.
 **Auth:** Public
 
 **Request:**
+
 ```json
 {
   "token": "reset_token",
@@ -247,6 +259,7 @@ Reset password with token.
 ```
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -263,6 +276,7 @@ Get current authenticated user.
 **Auth:** Required
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -293,6 +307,7 @@ Update current user profile.
 **Auth:** Required
 
 **Request:**
+
 ```json
 {
   "name": "Jane Doe",
@@ -314,6 +329,7 @@ Upload avatar (returns Cloudinary URL).
 **Request:** `file` (image, max 2MB)
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -332,6 +348,7 @@ Get current user's subscription.
 **Auth:** Required
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -347,6 +364,7 @@ Get current user's subscription.
 ```
 
 **Response 200 (no subscription):**
+
 ```json
 {
   "success": true,
@@ -363,6 +381,7 @@ Create subscription (initiates Razorpay checkout).
 **Auth:** Required
 
 **Request:**
+
 ```json
 {
   "planId": "plan_membership_monthly"
@@ -370,6 +389,7 @@ Create subscription (initiates Razorpay checkout).
 ```
 
 **Response 201:**
+
 ```json
 {
   "success": true,
@@ -392,6 +412,7 @@ Verify Razorpay payment after checkout.
 **Auth:** Required
 
 **Request:**
+
 ```json
 {
   "razorpayPaymentId": "pay_xxx",
@@ -401,11 +422,12 @@ Verify Razorpay payment after checkout.
 ```
 
 **Response 200:**
+
 ```json
 {
   "success": true,
   "data": {
-    "subscription": { "id": "uuid", "status": "ACTIVE", "..." : "..." }
+    "subscription": { "id": "uuid", "status": "ACTIVE", "...": "..." }
   }
 }
 ```
@@ -419,6 +441,7 @@ Cancel subscription (active until period end).
 **Auth:** Required
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -445,6 +468,7 @@ Get current user's payment history.
 **Query:** `?page=1&limit=20&type=SUBSCRIPTION`
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -473,6 +497,7 @@ Razorpay webhook handler.
 **Content-Type:** application/json
 
 **Events handled:**
+
 - `subscription.activated`
 - `subscription.charged`
 - `subscription.cancelled`
@@ -493,6 +518,7 @@ List contests.
 **Query:** `?page=1&limit=20&type=DSA&status=SCHEDULED`
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -532,6 +558,7 @@ Join a contest.
 **Auth:** Required + Subscription
 
 **Response 201:**
+
 ```json
 {
   "success": true,
@@ -566,6 +593,7 @@ Get global leaderboard.
 **Query:** `?period=WEEKLY&page=1&limit=50`
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -631,6 +659,7 @@ Create referral post.
 **Auth:** Required + Subscription
 
 **Request:**
+
 ```json
 {
   "company": "Google",
@@ -680,6 +709,7 @@ Book mock interview.
 **Auth:** Required
 
 **Request:**
+
 ```json
 {
   "preferredDate": "2025-07-01T10:00:00Z",
@@ -704,6 +734,7 @@ Book LinkedIn review.
 **Auth:** Required
 
 **Request:**
+
 ```json
 {
   "linkedinUrl": "https://linkedin.com/in/johndoe"
@@ -733,6 +764,7 @@ Get user notifications.
 **Query:** `?page=1&limit=20&unreadOnly=true`
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -781,6 +813,7 @@ All admin endpoints require `role: ADMIN`.
 Platform metrics.
 
 **Response 200:**
+
 ```json
 {
   "success": true,
@@ -815,6 +848,7 @@ Get user details with subscription and payment history.
 Update user (role, isActive).
 
 **Request:**
+
 ```json
 {
   "role": "MENTOR",
@@ -853,6 +887,7 @@ View activity logs.
 Create contest (Phase 2).
 
 **Request:**
+
 ```json
 {
   "title": "Weekly DSA Challenge",
@@ -874,32 +909,32 @@ Create job listing (Phase 3).
 
 ## 14. Phase 1 Endpoint Summary
 
-| Method | Endpoint | Auth | Phase |
-|--------|----------|------|-------|
-| GET | /health | Public | 1 |
-| POST | /auth/register | Public | 1 |
-| POST | /auth/login | Public | 1 |
-| POST | /auth/google | Public | 1 |
-| POST | /auth/refresh | Cookie | 1 |
-| POST | /auth/logout | Required | 1 |
-| POST | /auth/forgot-password | Public | 1 |
-| POST | /auth/reset-password | Public | 1 |
-| GET | /auth/me | Required | 1 |
-| PATCH | /users/me | Required | 1 |
-| POST | /users/me/avatar | Required | 1 |
-| GET | /subscriptions/me | Required | 1 |
-| POST | /subscriptions | Required | 1 |
-| POST | /subscriptions/verify | Required | 1 |
-| POST | /subscriptions/cancel | Required | 1 |
-| GET | /payments/me | Required | 1 |
-| POST | /webhooks/razorpay | Webhook | 1 |
-| GET | /admin/dashboard | Admin | 1 |
-| GET | /admin/users | Admin | 1 |
-| GET | /admin/users/:id | Admin | 1 |
-| PATCH | /admin/users/:id | Admin | 1 |
-| GET | /admin/subscriptions | Admin | 1 |
-| GET | /admin/payments | Admin | 1 |
-| GET | /admin/activity-logs | Admin | 1 |
+| Method | Endpoint              | Auth     | Phase |
+| ------ | --------------------- | -------- | ----- |
+| GET    | /health               | Public   | 1     |
+| POST   | /auth/register        | Public   | 1     |
+| POST   | /auth/login           | Public   | 1     |
+| POST   | /auth/google          | Public   | 1     |
+| POST   | /auth/refresh         | Cookie   | 1     |
+| POST   | /auth/logout          | Required | 1     |
+| POST   | /auth/forgot-password | Public   | 1     |
+| POST   | /auth/reset-password  | Public   | 1     |
+| GET    | /auth/me              | Required | 1     |
+| PATCH  | /users/me             | Required | 1     |
+| POST   | /users/me/avatar      | Required | 1     |
+| GET    | /subscriptions/me     | Required | 1     |
+| POST   | /subscriptions        | Required | 1     |
+| POST   | /subscriptions/verify | Required | 1     |
+| POST   | /subscriptions/cancel | Required | 1     |
+| GET    | /payments/me          | Required | 1     |
+| POST   | /webhooks/razorpay    | Webhook  | 1     |
+| GET    | /admin/dashboard      | Admin    | 1     |
+| GET    | /admin/users          | Admin    | 1     |
+| GET    | /admin/users/:id      | Admin    | 1     |
+| PATCH  | /admin/users/:id      | Admin    | 1     |
+| GET    | /admin/subscriptions  | Admin    | 1     |
+| GET    | /admin/payments       | Admin    | 1     |
+| GET    | /admin/activity-logs  | Admin    | 1     |
 
 ---
 

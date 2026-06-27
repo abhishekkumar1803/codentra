@@ -12,7 +12,10 @@ export default function EmployerPage() {
       <Card>
         <CardContent className="py-12 text-center text-sm text-muted-foreground">
           Employer tools are coming soon. Contact{' '}
-          <a href="mailto:hello@codentra.com" className="text-primary underline">
+          <a
+            href="mailto:hello@codentra.com"
+            className="text-primary underline"
+          >
             hello@codentra.com
           </a>{' '}
           to post jobs in the meantime.

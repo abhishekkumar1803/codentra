@@ -124,7 +124,9 @@ export function RegisterForm() {
             className="w-full"
             disabled={registerMutation.isPending}
           >
-            {registerMutation.isPending ? 'Creating account...' : 'Create account'}
+            {registerMutation.isPending
+              ? 'Creating account...'
+              : 'Create account'}
           </Button>
         </form>
 

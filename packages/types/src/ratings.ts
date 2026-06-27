@@ -27,13 +27,7 @@ export const CP_TIERS: RatingTier[] = [
   { min: 1800, max: 9999, title: 'Champion', color: '#ef4444' },
 ];
 
-export function getRatingTier(
-  rating: number,
-  type: RatingType,
-): RatingTier {
+export function getRatingTier(rating: number, type: RatingType): RatingTier {
   const tiers = type === 'DSA' ? DSA_TIERS : CP_TIERS;
-  return (
-    tiers.find((t) => rating >= t.min && rating <= t.max) ??
-    tiers[0]!
-  );
+  return tiers.find((t) => rating >= t.min && rating <= t.max) ?? tiers[0]!;
 }

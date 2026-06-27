@@ -1,6 +1,12 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle, Skeleton } from '@codentra/ui';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Skeleton,
+} from '@codentra/ui';
 import { useAdminDashboard } from '@/features/admin/hooks/use-admin';
 
 function formatCurrency(paise: number) {
@@ -26,9 +32,15 @@ export default function AdminOverviewPage() {
 
   const metrics = [
     { label: 'Total users', value: data.totalUsers.toLocaleString() },
-    { label: 'Active subscribers', value: data.activeSubscribers.toLocaleString() },
+    {
+      label: 'Active subscribers',
+      value: data.activeSubscribers.toLocaleString(),
+    },
     { label: 'Revenue this month', value: formatCurrency(data.monthlyRevenue) },
-    { label: 'New users this month', value: data.newUsersThisMonth.toLocaleString() },
+    {
+      label: 'New users this month',
+      value: data.newUsersThisMonth.toLocaleString(),
+    },
     {
       label: 'Churn rate',
       value: `${(data.churnRate * 100).toFixed(1)}%`,
@@ -39,7 +51,9 @@ export default function AdminOverviewPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Admin overview</h1>
-        <p className="mt-1 text-muted-foreground">Platform metrics at a glance.</p>
+        <p className="mt-1 text-muted-foreground">
+          Platform metrics at a glance.
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

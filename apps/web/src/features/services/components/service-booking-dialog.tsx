@@ -92,7 +92,9 @@ export function ServiceBookingDialog({ service, open, onClose }: Props) {
       >
         {success ? (
           <div className="space-y-4 text-center">
-            <p className="text-lg font-semibold text-green-600">Booking confirmed</p>
+            <p className="text-lg font-semibold text-green-600">
+              Booking confirmed
+            </p>
             <p className="text-sm text-muted-foreground">
               Your {service.title} session has been booked for{' '}
               {formatPrice(service.amount)}. A mentor will reach out shortly.

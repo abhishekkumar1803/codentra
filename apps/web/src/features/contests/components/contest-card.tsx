@@ -2,12 +2,7 @@
 
 import Link from 'next/link';
 import type { ContestListItem } from '@codentra/types';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@codentra/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@codentra/ui';
 import {
   ContestStatusBadge,
   ContestTypeBadge,
@@ -25,7 +20,9 @@ export function ContestCard({
     <Link href={`${hrefBase}/${contest.slug}`}>
       <Card className="transition-shadow hover:shadow-md">
         <CardHeader className="flex flex-row items-start justify-between gap-2 space-y-0 pb-2">
-          <CardTitle className="text-lg leading-snug">{contest.title}</CardTitle>
+          <CardTitle className="text-lg leading-snug">
+            {contest.title}
+          </CardTitle>
           <ContestStatusBadge status={contest.status} />
         </CardHeader>
         <CardContent className="space-y-3">

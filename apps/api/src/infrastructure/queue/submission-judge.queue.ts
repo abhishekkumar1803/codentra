@@ -1,4 +1,9 @@
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Queue, Worker, type ConnectionOptions } from 'bullmq';
 import { SubmissionJudgingService } from '../judge/submission-judging.service';
@@ -77,7 +82,10 @@ export class SubmissionJudgeQueueService
         });
 
         this.worker.on('error', (err) => {
-          this.logger.error(`Submission worker error: ${err.message}`, err.stack);
+          this.logger.error(
+            `Submission worker error: ${err.message}`,
+            err.stack,
+          );
         });
 
         this.logger.log(

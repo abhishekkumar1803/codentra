@@ -4,7 +4,10 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Button, Card, CardContent, Skeleton } from '@codentra/ui';
 import { ReferralCard } from '@/features/referrals/components/referral-card';
-import { useMyReferrals, useReferrals } from '@/features/referrals/hooks/use-referrals';
+import {
+  useMyReferrals,
+  useReferrals,
+} from '@/features/referrals/hooks/use-referrals';
 
 export default function ReferralsPage() {
   const [tab, setTab] = useState<'board' | 'mine'>('board');
@@ -44,8 +47,8 @@ export default function ReferralsPage() {
 
       <Card className="border-dashed">
         <CardContent className="py-4 text-sm text-muted-foreground">
-          <strong className="text-foreground">How it works:</strong> browse
-          open referrals → read requirements → express interest → get the
+          <strong className="text-foreground">How it works:</strong> browse open
+          referrals → read requirements → express interest → get the
           referrer&apos;s contact to follow up.
         </CardContent>
       </Card>

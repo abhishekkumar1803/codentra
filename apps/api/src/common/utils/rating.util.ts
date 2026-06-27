@@ -31,7 +31,6 @@ export function ratingDeltaForSolve(
   difficulty: 'EASY' | 'MEDIUM' | 'HARD',
 ): number {
   const base = contestType === 'COMPETITIVE_PROGRAMMING' ? 12 : 8;
-  const mult =
-    difficulty === 'HARD' ? 2 : difficulty === 'MEDIUM' ? 1.5 : 1;
+  const mult = difficulty === 'HARD' ? 2 : difficulty === 'MEDIUM' ? 1.5 : 1;
   return Math.round(base * mult);
 }

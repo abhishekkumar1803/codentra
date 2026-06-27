@@ -2,13 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import {
-  Button,
-  Card,
-  CardContent,
-  Input,
-  Skeleton,
-} from '@codentra/ui';
+import { Button, Card, CardContent, Input, Skeleton } from '@codentra/ui';
 import { useAdminUsers } from '@/features/admin/hooks/use-admin';
 
 export default function AdminUsersPage() {

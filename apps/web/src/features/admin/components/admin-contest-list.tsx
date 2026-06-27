@@ -2,12 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import {
-  Button,
-  Card,
-  CardContent,
-  Skeleton,
-} from '@codentra/ui';
+import { Button, Card, CardContent, Skeleton } from '@codentra/ui';
 import {
   ContestStatusBadge,
   ContestTypeBadge,

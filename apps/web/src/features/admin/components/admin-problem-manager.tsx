@@ -108,7 +108,10 @@ export function AdminProblemManager({ contestId }: { contestId: string }) {
             </div>
             <div className="space-y-1">
               <Label>Points</Label>
-              <Input value={points} onChange={(e) => setPoints(e.target.value)} />
+              <Input
+                value={points}
+                onChange={(e) => setPoints(e.target.value)}
+              />
             </div>
           </div>
           <div className="space-y-1">
@@ -216,7 +219,9 @@ export function AdminProblemManager({ contestId }: { contestId: string }) {
           <CardTitle>Problems ({data?.items.length ?? 0})</CardTitle>
         </CardHeader>
         <CardContent>
-          {isLoading && <p className="text-sm text-muted-foreground">Loading...</p>}
+          {isLoading && (
+            <p className="text-sm text-muted-foreground">Loading...</p>
+          )}
           {!isLoading && !data?.items.length && (
             <p className="text-sm text-muted-foreground">No problems yet.</p>
           )}

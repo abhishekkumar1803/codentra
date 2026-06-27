@@ -1,7 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { Button, Card, CardContent, CardHeader, CardTitle, Skeleton } from '@codentra/ui';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Skeleton,
+} from '@codentra/ui';
 import { SubscriptionStatus } from '@/features/subscription/components/subscription-status';
 import { useSubscription } from '@/features/subscription/hooks/use-subscription';
 import { useAuth } from '@/features/auth/hooks/use-auth';
@@ -37,7 +44,9 @@ function StatCard({
               {value}
             </p>
             {subtitle && (
-              <p className="mt-1 text-xs font-medium text-primary">{subtitle}</p>
+              <p className="mt-1 text-xs font-medium text-primary">
+                {subtitle}
+              </p>
             )}
           </>
         )}

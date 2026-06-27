@@ -278,40 +278,46 @@ frontend/
 
 ### 3.1 Route Groups
 
-| Group | Path Prefix | Auth | Description |
-|-------|------------|------|-------------|
-| `(marketing)` | `/` | Public | Landing, pricing |
-| `(auth)` | `/login`, `/register` | Public | Authentication |
-| `(dashboard)` | `/dashboard`, `/settings` | User | Authenticated user area |
-| `(admin)` | `/admin` | Admin | Admin panel |
+| Group         | Path Prefix               | Auth   | Description             |
+| ------------- | ------------------------- | ------ | ----------------------- |
+| `(marketing)` | `/`                       | Public | Landing, pricing        |
+| `(auth)`      | `/login`, `/register`     | Public | Authentication          |
+| `(dashboard)` | `/dashboard`, `/settings` | User   | Authenticated user area |
+| `(admin)`     | `/admin`                  | Admin  | Admin panel             |
 
 ### 3.2 Phase 1 Routes
 
-| Route | Page | Description |
-|-------|------|-------------|
-| `/` | Landing | Marketing homepage |
-| `/pricing` | Pricing | Membership plan details |
-| `/login` | Login | Email + Google login |
-| `/register` | Register | Email registration |
-| `/forgot-password` | Forgot Password | Password reset request |
-| `/reset-password` | Reset Password | Set new password |
-| `/callback/google` | Google Callback | OAuth redirect handler |
-| `/dashboard` | Dashboard | User home |
-| `/settings` | Settings | Profile management |
-| `/subscription` | Subscription | Manage membership |
-| `/payments` | Payments | Payment history |
-| `/admin` | Admin Overview | Platform metrics |
-| `/admin/users` | Users | User management |
-| `/admin/users/[id]` | User Detail | Single user view |
-| `/admin/subscriptions` | Subscriptions | All subscriptions |
-| `/admin/payments` | Payments | All payments |
-| `/admin/activity-logs` | Activity Logs | Audit trail |
+| Route                  | Page            | Description             |
+| ---------------------- | --------------- | ----------------------- |
+| `/`                    | Landing         | Marketing homepage      |
+| `/pricing`             | Pricing         | Membership plan details |
+| `/login`               | Login           | Email + Google login    |
+| `/register`            | Register        | Email registration      |
+| `/forgot-password`     | Forgot Password | Password reset request  |
+| `/reset-password`      | Reset Password  | Set new password        |
+| `/callback/google`     | Google Callback | OAuth redirect handler  |
+| `/dashboard`           | Dashboard       | User home               |
+| `/settings`            | Settings        | Profile management      |
+| `/subscription`        | Subscription    | Manage membership       |
+| `/payments`            | Payments        | Payment history         |
+| `/admin`               | Admin Overview  | Platform metrics        |
+| `/admin/users`         | Users           | User management         |
+| `/admin/users/[id]`    | User Detail     | Single user view        |
+| `/admin/subscriptions` | Subscriptions   | All subscriptions       |
+| `/admin/payments`      | Payments        | All payments            |
+| `/admin/activity-logs` | Activity Logs   | Audit trail             |
 
 ### 3.3 Middleware Protection
 
 ```typescript
 // middleware.ts
-const publicRoutes = ['/', '/login', '/register', '/pricing', '/forgot-password'];
+const publicRoutes = [
+  '/',
+  '/login',
+  '/register',
+  '/pricing',
+  '/forgot-password',
+];
 const authRoutes = ['/login', '/register', '/forgot-password'];
 const adminRoutes = ['/admin'];
 
@@ -320,7 +326,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Redirect authenticated users away from auth pages
-  if (token && authRoutes.some(route => pathname.startsWith(route))) {
+  if (token && authRoutes.some((route) => pathname.startsWith(route))) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
@@ -352,6 +358,7 @@ features/subscription/
 ### 4.1 Feature Module Example: Subscription
 
 **types/subscription.types.ts**
+
 ```typescript
 export interface Subscription {
   id: string;
@@ -371,6 +378,7 @@ export interface CheckoutResponse {
 ```
 
 **schemas/subscription.schema.ts**
+
 ```typescript
 import { z } from 'zod';
 
@@ -382,9 +390,13 @@ export const verifySubscriptionSchema = z.object({
 ```
 
 **api/subscription-api.ts**
+
 ```typescript
 import { apiClient } from '@/shared/lib/api-client';
-import type { Subscription, CheckoutResponse } from '../types/subscription.types';
+import type {
+  Subscription,
+  CheckoutResponse,
+} from '../types/subscription.types';
 
 export const subscriptionApi = {
   getMySubscription: () =>
@@ -394,7 +406,10 @@ export const subscriptionApi = {
     apiClient.post<CheckoutResponse>('/subscriptions', { planId }),
 
   verify: (data: VerifySubscriptionInput) =>
-    apiClient.post<{ subscription: Subscription }>('/subscriptions/verify', data),
+    apiClient.post<{ subscription: Subscription }>(
+      '/subscriptions/verify',
+      data,
+    ),
 
   cancel: () =>
     apiClient.post<{ subscription: Subscription }>('/subscriptions/cancel'),
@@ -402,6 +417,7 @@ export const subscriptionApi = {
 ```
 
 **hooks/use-subscription.ts**
+
 ```typescript
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { subscriptionApi } from '../api/subscription-api';
@@ -426,6 +442,7 @@ export function useCancelSubscription() {
 ```
 
 **components/subscription-status.tsx**
+
 ```typescript
 'use client';
 
@@ -461,14 +478,14 @@ export function SubscriptionStatus() {
 
 All API data managed via React Query:
 
-| Query Key Pattern | Data | Stale Time |
-|-------------------|------|------------|
-| `['auth', 'me']` | Current user | 5 min |
-| `['subscription', 'me']` | User subscription | 5 min |
-| `['payments', 'me']` | Payment history | 2 min |
-| `['admin', 'metrics']` | Admin dashboard | 1 min |
-| `['admin', 'users', params]` | User list | 30 sec |
-| `['contests', params]` | Contest list | 1 min |
+| Query Key Pattern            | Data              | Stale Time |
+| ---------------------------- | ----------------- | ---------- |
+| `['auth', 'me']`             | Current user      | 5 min      |
+| `['subscription', 'me']`     | User subscription | 5 min      |
+| `['payments', 'me']`         | Payment history   | 2 min      |
+| `['admin', 'metrics']`       | Admin dashboard   | 1 min      |
+| `['admin', 'users', params]` | User list         | 30 sec     |
+| `['contests', params]`       | Contest list      | 1 min      |
 
 **Query Client Configuration:**
 
@@ -494,6 +511,7 @@ export const queryClient = new QueryClient({
 Only for UI state that doesn't belong on the server:
 
 **stores/ui-store.ts**
+
 ```typescript
 interface UiState {
   sidebarOpen: boolean;
@@ -511,6 +529,7 @@ export const useUiStore = create<UiState>((set) => ({
 ```
 
 **stores/auth-store.ts**
+
 ```typescript
 interface AuthState {
   accessToken: string | null;
@@ -538,7 +557,11 @@ class ApiClient {
     this.accessToken = token;
   }
 
-  private async request<T>(method: string, path: string, body?: unknown): Promise<T> {
+  private async request<T>(
+    method: string,
+    path: string,
+    body?: unknown,
+  ): Promise<T> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
@@ -587,10 +610,18 @@ class ApiClient {
     }
   }
 
-  get<T>(path: string) { return this.request<T>('GET', path); }
-  post<T>(path: string, body?: unknown) { return this.request<T>('POST', path, body); }
-  patch<T>(path: string, body?: unknown) { return this.request<T>('PATCH', path, body); }
-  delete<T>(path: string) { return this.request<T>('DELETE', path); }
+  get<T>(path: string) {
+    return this.request<T>('GET', path);
+  }
+  post<T>(path: string, body?: unknown) {
+    return this.request<T>('POST', path, body);
+  }
+  patch<T>(path: string, body?: unknown) {
+    return this.request<T>('PATCH', path, body);
+  }
+  delete<T>(path: string) {
+    return this.request<T>('DELETE', path);
+  }
 }
 
 export const apiClient = new ApiClient();
@@ -600,7 +631,9 @@ export const apiClient = new ApiClient();
 
 ```typescript
 export class ApiError extends Error {
-  constructor(public error: { code: string; message: string; details?: unknown[] }) {
+  constructor(
+    public error: { code: string; message: string; details?: unknown[] },
+  ) {
     super(error.message);
     this.name = 'ApiError';
   }
@@ -629,6 +662,7 @@ Installed via `npx shadcn@latest add <component>`:
 ### 7.2 Feedback Components
 
 **EmptyState** — Used when no data exists:
+
 ```typescript
 interface EmptyStateProps {
   title: string;
@@ -640,6 +674,7 @@ interface EmptyStateProps {
 ```
 
 **ErrorState** — Used on fetch failures:
+
 ```typescript
 interface ErrorStateProps {
   message: string;
@@ -652,6 +687,7 @@ interface ErrorStateProps {
 ### 7.3 Data Display
 
 **DataTable** — Reusable table with sorting, pagination:
+
 ```typescript
 interface DataTableProps<T> {
   columns: ColumnDef<T>[];
@@ -784,13 +820,13 @@ Landing Page (/)
 
 ### 11.1 Breakpoints (Tailwind)
 
-| Breakpoint | Width | Usage |
-|------------|-------|-------|
-| default | 0px+ | Mobile first |
-| `sm` | 640px+ | Large phones |
-| `md` | 768px+ | Tablets |
-| `lg` | 1024px+ | Desktop |
-| `xl` | 1280px+ | Wide desktop |
+| Breakpoint | Width   | Usage        |
+| ---------- | ------- | ------------ |
+| default    | 0px+    | Mobile first |
+| `sm`       | 640px+  | Large phones |
+| `md`       | 768px+  | Tablets      |
+| `lg`       | 1024px+ | Desktop      |
+| `xl`       | 1280px+ | Wide desktop |
 
 ### 11.2 Mobile Patterns
 
@@ -859,6 +895,7 @@ export function useCheckout() {
 ```
 
 Load Razorpay script in subscription page:
+
 ```typescript
 <Script src="https://checkout.razorpay.com/v1/checkout.js" />
 ```
@@ -867,11 +904,11 @@ Load Razorpay script in subscription page:
 
 ## 14. Testing Strategy
 
-| Type | Tool | Scope |
-|------|------|-------|
-| Unit | Vitest | Hooks, utils, schemas |
-| Component | Vitest + Testing Library | Feature components |
-| E2E | Playwright | Auth, subscription, dashboard flows |
+| Type      | Tool                     | Scope                               |
+| --------- | ------------------------ | ----------------------------------- |
+| Unit      | Vitest                   | Hooks, utils, schemas               |
+| Component | Vitest + Testing Library | Feature components                  |
+| E2E       | Playwright               | Auth, subscription, dashboard flows |
 
 ### 14.1 E2E Test Scenarios (Phase 1)
 
@@ -913,7 +950,8 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 // app/page.tsx
 export const metadata: Metadata = {
   title: 'Codentra — Learn. Compete. Grow.',
-  description: 'Platform for developers to participate in DSA contests, competitive programming, system design challenges, and advance their careers.',
+  description:
+    'Platform for developers to participate in DSA contests, competitive programming, system design challenges, and advance their careers.',
   openGraph: {
     title: 'Codentra — Learn. Compete. Grow.',
     description: '...',

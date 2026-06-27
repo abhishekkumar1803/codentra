@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const authRoutes = ['/login', '/register', '/forgot-password', '/reset-password'];
+const authRoutes = [
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+];
 
 const protectedPrefixes = [
   '/dashboard',
@@ -25,7 +30,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  if (!token && protectedPrefixes.some((prefix) => pathname.startsWith(prefix))) {
+  if (
+    !token &&
+    protectedPrefixes.some((prefix) => pathname.startsWith(prefix))
+  ) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 

@@ -14,7 +14,9 @@ export function CtaSection() {
     <section className="px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-4xl rounded-2xl bg-primary px-6 py-16 text-center text-primary-foreground sm:px-12">
         <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          {isLoggedIn ? 'Keep your momentum going' : 'Ready to accelerate your career?'}
+          {isLoggedIn
+            ? 'Keep your momentum going'
+            : 'Ready to accelerate your career?'}
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-primary-foreground/80">
           {isLoggedIn

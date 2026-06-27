@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
   ContestStatus,
   ContestType,
@@ -162,8 +158,8 @@ export class SubmissionJudgingService {
     const profile = await this.prisma.profile.findUnique({ where: { userId } });
     const current =
       ratingType === RatingType.DSA
-        ? profile?.dsaRating ?? 1200
-        : profile?.cpRating ?? 1200;
+        ? (profile?.dsaRating ?? 1200)
+        : (profile?.cpRating ?? 1200);
 
     const delta = ratingDeltaForSolve(
       contestType === ContestType.COMPETITIVE_PROGRAMMING

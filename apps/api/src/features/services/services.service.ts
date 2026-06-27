@@ -180,7 +180,13 @@ export class ServicesService {
         this.prisma.mockInterview.findMany({
           where: {
             mentorId,
-            status: { in: [ServiceStatus.PENDING, ServiceStatus.SCHEDULED, ServiceStatus.IN_REVIEW] },
+            status: {
+              in: [
+                ServiceStatus.PENDING,
+                ServiceStatus.SCHEDULED,
+                ServiceStatus.IN_REVIEW,
+              ],
+            },
           },
           include: { user: { select: { id: true, name: true, email: true } } },
           orderBy: { createdAt: 'desc' },
@@ -188,7 +194,13 @@ export class ServicesService {
         this.prisma.careerCall.findMany({
           where: {
             mentorId,
-            status: { in: [ServiceStatus.PENDING, ServiceStatus.SCHEDULED, ServiceStatus.IN_REVIEW] },
+            status: {
+              in: [
+                ServiceStatus.PENDING,
+                ServiceStatus.SCHEDULED,
+                ServiceStatus.IN_REVIEW,
+              ],
+            },
           },
           include: { user: { select: { id: true, name: true, email: true } } },
           orderBy: { createdAt: 'desc' },
@@ -196,7 +208,13 @@ export class ServicesService {
         this.prisma.resumeReview.findMany({
           where: {
             reviewerId: mentorId,
-            status: { in: [ServiceStatus.PENDING, ServiceStatus.SCHEDULED, ServiceStatus.IN_REVIEW] },
+            status: {
+              in: [
+                ServiceStatus.PENDING,
+                ServiceStatus.SCHEDULED,
+                ServiceStatus.IN_REVIEW,
+              ],
+            },
           },
           include: { user: { select: { id: true, name: true, email: true } } },
           orderBy: { createdAt: 'desc' },
@@ -204,7 +222,13 @@ export class ServicesService {
         this.prisma.linkedInReview.findMany({
           where: {
             reviewerId: mentorId,
-            status: { in: [ServiceStatus.PENDING, ServiceStatus.SCHEDULED, ServiceStatus.IN_REVIEW] },
+            status: {
+              in: [
+                ServiceStatus.PENDING,
+                ServiceStatus.SCHEDULED,
+                ServiceStatus.IN_REVIEW,
+              ],
+            },
           },
           include: { user: { select: { id: true, name: true, email: true } } },
           orderBy: { createdAt: 'desc' },
@@ -266,7 +290,8 @@ export class ServicesService {
           data: {
             userId,
             paymentId,
-            resumeUrl: dto.resumeUrl ?? 'https://placeholder.codentra.dev/resume.pdf',
+            resumeUrl:
+              dto.resumeUrl ?? 'https://placeholder.codentra.dev/resume.pdf',
             status: ServiceStatus.PENDING,
           },
         });
@@ -276,9 +301,7 @@ export class ServicesService {
             userId,
             paymentId,
             durationMinutes: durationMinutes ?? 60,
-            scheduledAt: dto.preferredDate
-              ? new Date(dto.preferredDate)
-              : null,
+            scheduledAt: dto.preferredDate ? new Date(dto.preferredDate) : null,
             status: ServiceStatus.PENDING,
           },
         });
@@ -288,9 +311,7 @@ export class ServicesService {
             userId,
             paymentId,
             durationMinutes: durationMinutes ?? 45,
-            scheduledAt: dto.preferredDate
-              ? new Date(dto.preferredDate)
-              : null,
+            scheduledAt: dto.preferredDate ? new Date(dto.preferredDate) : null,
             notes: dto.notes ?? null,
             status: ServiceStatus.PENDING,
           },
